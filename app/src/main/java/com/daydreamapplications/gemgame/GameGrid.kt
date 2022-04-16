@@ -123,4 +123,8 @@ class GameGrid(
         }
         return Array(column.size) { startLocation.indexOf(it) - it }
     }
+
+    fun print() {
+        print { it.name.first() }
+    }
 }

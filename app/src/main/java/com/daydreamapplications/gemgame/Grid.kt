@@ -72,4 +72,11 @@ abstract class GenericGrid<T>(
     override fun set(coordinates: Coordinates, value: T) {
         coordinates.run { set(x, y, value) }
     }
+
+    fun print(symbol: (T) -> Char) {
+        println("Grid at ${System.currentTimeMillis()}")
+        rows().forEachIndexed { column, items ->
+            println("$column: ${items.map(symbol).joinToString()}")
+        }
+    }
 }

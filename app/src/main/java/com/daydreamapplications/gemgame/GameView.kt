@@ -12,7 +12,7 @@ import com.daydreamapplications.gemgame.*
 import kotlin.math.max
 
 class GameView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private val gemGrid: GameGrid
@@ -277,7 +277,7 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun renderGems(
-        canvas: Canvas
+        canvas: Canvas,
     ) {
         gemGrid.forEachIndexed { xIndex, yIndex, gemType ->
             renderGem(canvas, xIndex, yIndex, getDrawable(gemType))
@@ -314,7 +314,7 @@ class GameView @JvmOverloads constructor(
     private fun updateRectBounds(
         xIndex: Int,
         yIndex: Int,
-        radius: Int = gemRadius
+        radius: Int = gemRadius,
     ) {
         val verticalOffset = verticalOffsets[xIndex, yIndex]
         val horizontalOffset = horizontalOffsets[xIndex, yIndex]
@@ -350,6 +350,7 @@ class GameView @JvmOverloads constructor(
 
                 remove(coordinates, gemRemovalArray)
             }
+            gemGrid.print()
         }
     }
 }

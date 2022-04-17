@@ -27,4 +27,13 @@ class GridTest {
         }
         grid.toString() assertEquals "a, b\nc, d"
     }
+
+    @Test
+    fun `to iterable`() {
+        val grid = Grid.build<Char> {
+            column('a', 'c')
+            column('b', 'd')
+        }
+        grid.toIterable() assertEquals listOf('a', 'c', 'b', 'd')
+    }
 }

@@ -1,19 +1,21 @@
 package com.daydreamapplications.gemgame
 
+import com.daydreamapplications.gemgame.v2.Grid
+
 class GameGrid(
     width: Int,
     height: Int
-) : GenericGrid<GemType>(width, height, { _, _ -> randomGemType() }) {
+) : Grid<GemType>(width, height, { _, _ -> randomGemType() }) {
 
 
     fun getAllMatches(): List<MatchedGroupArray> {
 
         val horizontalMatches = rows()
-            .mapIndexed { yIndex, _ -> getMatchesInColumn(yIndex) }
+            .mapIndexed { yIndex, _ -> getMatchesInRow(yIndex) }
             .flatten()
 
         val verticalMatches = columns()
-            .mapIndexed { xIndex, _ -> getMatchesInRow(xIndex) }
+            .mapIndexed { xIndex, _ -> getMatchesInColumn(xIndex) }
             .flatten()
 
         return horizontalMatches + verticalMatches
@@ -125,6 +127,6 @@ class GameGrid(
     }
 
     fun print() {
-        print { it.name.first() }
+        super.toString()
     }
 }

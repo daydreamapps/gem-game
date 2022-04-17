@@ -1,10 +1,13 @@
 package com.daydreamapplications.gemgame.v2
 
-class Grid<T : Any>(
-    val width: Int,
-    val height: Int,
+import com.daydreamapplications.gemgame.Coordinates
+import com.daydreamapplications.gemgame.IGrid
+
+open class Grid<T : Any>(
+    override val width: Int,
+    override val height: Int,
     val fillValue: (x: Int, y: Int) -> T,
-) {
+) : IGrid<T> {
 
     private val columns: Array<Array<Any>> = Array(width) { xIndex ->
         Array(height) { yIndex ->
@@ -12,12 +15,53 @@ class Grid<T : Any>(
         }
     }
 
-    private val rows: Iterable<Iterable<Any>>
+    private val rows: List<List<Any>>
         get() {
             return (0 until height).map { yIndex ->
                 columns.map { it[yIndex] }
             }
         }
+
+    override fun setAllBy(fillValue: (Int, Int) -> T) {
+        TODO("Not yet implemented")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun toIterable(): Iterable<T> = columns.flatten() as List<T>
+
+    override fun forEachIndexed(action: (x: Int, y: Int, T) -> Unit) {
+        columns.forEachIndexed { xIndex, column ->
+            column.forEachIndexed { yIndex, value ->
+                action(xIndex, yIndex, value as T)
+            }
+        }
+    }
+
+    override fun columns(): List<List<T>> = columns.map { it.toList() as List<T> }
+
+    override fun column(xIndex: Int): List<T> = columns[xIndex].toList() as List<T>
+
+    override fun rows(): List<List<T>> = rows.map { it.toList() as List<T> }
+
+    override fun row(yIndex: Int): List<T> = rows[yIndex].toList() as List<T>
+
+    override fun get(xIndex: Int, yIndex: Int): T = columns[xIndex][yIndex] as T
+
+    override fun set(xIndex: Int, yIndex: Int, value: T) {
+        columns[xIndex][yIndex] = value
+    }
+
+    override fun get(coordinates: Coordinates): T {
+        return coordinates.run {
+            get(x, y)
+        }
+    }
+
+    override fun set(coordinates: Coordinates, value: T) {
+        coordinates.apply {
+            set(x, y, value)
+        }
+    }
 
     companion object {
 

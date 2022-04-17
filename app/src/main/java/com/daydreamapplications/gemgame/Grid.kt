@@ -16,7 +16,9 @@ interface IGrid<T> {
     operator fun get(xIndex: Int, yIndex: Int): T
     operator fun set(xIndex: Int, yIndex: Int, value: T)
     operator fun get(coordinates: Coordinates): T
+    fun getOrNull(coordinates: Coordinates): T?
     operator fun set(coordinates: Coordinates, value: T)
+    fun contains(coordinates: Coordinates): Boolean
 }
 
 
@@ -65,6 +67,10 @@ abstract class GenericGrid<T>(
 
     override fun set(xIndex: Int, yIndex: Int, value: T) {
         columns[xIndex][yIndex] = value
+    }
+
+    override fun getOrNull(coordinates: Coordinates): T? {
+        TODO("Not yet implemented")
     }
 
     override fun get(coordinates: Coordinates): T = coordinates.run { get(x, y) }

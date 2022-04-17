@@ -51,15 +51,34 @@ open class Grid<T : Any>(
         columns[xIndex][yIndex] = value
     }
 
+    override fun getOrNull(coordinates: Coordinates): T? {
+        return when {
+            coordinates.x !in 0 until width -> return null
+            coordinates.y !in 0 until height -> return null
+            else -> coordinates.run {
+                get(x, y)
+            }
+        }
+    }
+
     override fun get(coordinates: Coordinates): T {
+        require(coordinates.x in 0 until width)
+        require(coordinates.y in 0 until height)
+
         return coordinates.run {
             get(x, y)
         }
     }
 
     override fun set(coordinates: Coordinates, value: T) {
-        coordinates.apply {
-            set(x, y, value)
+
+    }
+
+    override fun contains(coordinates: Coordinates): Boolean {
+        return when {
+            coordinates.x !in 0 until width -> false
+            coordinates.y !in 0 until height -> false
+            else -> true
         }
     }
 

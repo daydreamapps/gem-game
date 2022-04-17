@@ -30,6 +30,18 @@ data class Coordinates(val x: Int, val y: Int) {
         return Direction.NONE
     }
 
+
+    /**
+     * Note: these coordinates are not bound by any grid validity
+     */
+    val touching: Set<Coordinates>
+        get() = setOf(
+            offset(Direction.UP, 1),
+            offset(Direction.DOWN, 1),
+            offset(Direction.LEFT, 1),
+            offset(Direction.RIGHT, 1),
+        )
+
     companion object {
 
         fun axis(coordinates: Pair<Coordinates, Coordinates>): Axis? {

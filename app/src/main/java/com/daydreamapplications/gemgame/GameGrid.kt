@@ -12,9 +12,13 @@ class GameGrid(
 
 
     fun getAllMatches(): List<Group<GemType>> {
-        return GroupBuilder(this).allGroups()
+        val start = System.currentTimeMillis()
+        val toList = GroupBuilder(this).allGroups()
             .mapNotNull(Group<GemType>::match3)
             .toList()
+        val end = System.currentTimeMillis()
+        Log.v("Match Timing:", "${end - start}ms")
+        return toList
     }
 
     fun swapGems(first: Coordinates, second: Coordinates) {

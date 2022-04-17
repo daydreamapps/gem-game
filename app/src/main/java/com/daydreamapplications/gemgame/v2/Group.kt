@@ -59,7 +59,10 @@ class GroupBuilder<T : Any>(
         val groups: MutableSet<Group<T>> = mutableSetOf()
 
         grid.forEachIndexed { x, y, _ ->
-            groups.add(groupStartingFrom(x, y))
+            val coordinate = Coordinates(x, y)
+            if (groups.none { it.contains(coordinate) }) {
+                groups.add(groupStartingFrom(x, y))
+            }
         }
 
         return groups
@@ -76,12 +79,9 @@ class GroupBuilder<T : Any>(
         val checkedSquares: MutableSet<Coordinates> = mutableSetOf(Coordinates(x, y))
         val groupedSquares: MutableSet<Coordinates> = mutableSetOf(Coordinates(x, y))
 
-
-        var complete = false
+        var complete: Boolean
 
         do {
-//        val squaresToCheck: MutableSet<Coordinates> = mutableSetOf()
-//            squaresToCheck.clear()
             val connected = checkedSquares.map { linkedSquares(it) }
                 .flatten()
                 .toSet()

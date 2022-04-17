@@ -71,7 +71,9 @@ open class Grid<T : Any>(
     }
 
     override fun set(coordinates: Coordinates, value: T) {
-
+        coordinates.apply {
+            set(x, y, value)
+        }
     }
 
     override fun contains(coordinates: Coordinates): Boolean {

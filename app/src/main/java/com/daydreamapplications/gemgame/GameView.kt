@@ -342,7 +342,7 @@ class GameView @JvmOverloads constructor(
 
         gemGrid.getAllMatches().apply {
             if (isNotEmpty()) {
-                val coordinates = flatMap { it.coordinates.toList() }.distinct()
+                val coordinates = flatten()
 
                 coordinates.groupBy { it.x }.forEach { (xIndex, coordinates) ->
                     gemRemovalArray[xIndex] += coordinates.size

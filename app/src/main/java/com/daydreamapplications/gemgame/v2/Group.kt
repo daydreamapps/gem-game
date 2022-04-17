@@ -1,11 +1,55 @@
 package com.daydreamapplications.gemgame.v2
 
 import com.daydreamapplications.gemgame.Coordinates
+import com.daydreamapplications.gemgame.Direction
 
 data class Group<T : Any>(
     val value: T,
     val coordinates: Set<Coordinates>,
-) : Set<Coordinates> by coordinates
+) : Set<Coordinates> by coordinates {
+
+    val match3: Group<T>?
+        get() {
+            val horizontal = coordinates
+                .filter(this::horizontalMatch)
+                .toSet()
+
+            val vertical = coordinates
+                .filter(this::verticalMatch)
+                .toSet()
+
+            return Group(
+                value = value,
+                coordinates = horizontal + vertical
+            ).takeIf { it.isNotEmpty() }
+        }
+
+    fun horizontalMatch(coordinate: Coordinates): Boolean {
+        coordinate.run {
+            val leftest = offset(Direction.LEFT, 2)
+            val left = offset(Direction.LEFT, 1)
+            val right = offset(Direction.RIGHT, 1)
+            val rightest = offset(Direction.RIGHT, 2)
+
+            return (coordinates.contains(leftest) && coordinates.contains(left)) ||
+                    (coordinates.contains(left) && coordinates.contains(right)) ||
+                    (coordinates.contains(right) && coordinates.contains(rightest))
+        }
+    }
+
+    fun verticalMatch(coordinate: Coordinates): Boolean {
+        coordinate.run {
+            val upest = offset(Direction.UP, 2)
+            val up = offset(Direction.UP, 1)
+            val down = offset(Direction.DOWN, 1)
+            val downest = offset(Direction.DOWN, 2)
+
+            return (coordinates.contains(upest) && coordinates.contains(up)) ||
+                    (coordinates.contains(up) && coordinates.contains(down)) ||
+                    (coordinates.contains(down) && coordinates.contains(downest))
+        }
+    }
+}
 
 class GroupBuilder<T : Any>(
     private val grid: Grid<T>,
@@ -32,25 +76,24 @@ class GroupBuilder<T : Any>(
         val checkedSquares: MutableSet<Coordinates> = mutableSetOf(Coordinates(x, y))
         val groupedSquares: MutableSet<Coordinates> = mutableSetOf(Coordinates(x, y))
 
-        val linkedSquares: MutableSet<Coordinates> = mutableSetOf()
-
 
         var complete = false
 
         do {
-            linkedSquares.clear()
+//        val squaresToCheck: MutableSet<Coordinates> = mutableSetOf()
+//            squaresToCheck.clear()
             val connected = checkedSquares.map { linkedSquares(it) }
                 .flatten()
                 .toSet()
-            linkedSquares.addAll(connected - checkedSquares)
+            val squaresToCheck = connected - checkedSquares
 
-            linkedSquares.forEach {
+            squaresToCheck.forEach {
                 if (grid.get(it) == value) {
                     groupedSquares.add(it)
                 }
             }
-            complete = checkedSquares == linkedSquares
-            checkedSquares.addAll(linkedSquares)
+            complete = squaresToCheck.isEmpty()
+            checkedSquares.addAll(squaresToCheck)
 
         } while (!complete)
 

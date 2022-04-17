@@ -22,9 +22,9 @@ open class Grid<T : Any>(
             }
         }
 
-    override fun setAllBy(fillValue: (Int, Int) -> T) {
-        TODO("Not yet implemented")
-    }
+//    override fun setAllBy(fillValue: (Int, Int) -> T) {
+//        TODO("Not yet implemented")
+//    }
 
     @Suppress("UNCHECKED_CAST")
     override fun toIterable(): Iterable<T> = columns.flatten() as List<T>
@@ -138,11 +138,12 @@ open class Grid<T : Any>(
     }
 
     override fun toString(): String {
-        return rows.joinToString(separator = "\n") { it.joinToString() }
+        return rows.joinToString(separator = "\n") { it.joinToString(separator = ",") }
     }
 }
 
-open class Pointer(
+data class Square<T : Any>(
     val x: Int,
     val y: Int,
+    val value: T,
 )

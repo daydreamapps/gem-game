@@ -5,7 +5,7 @@ interface IGrid<T> {
     val width: Int
     val height: Int
 
-    fun setAllBy(fillValue: (Int, Int) -> T)
+//    fun setAllBy(fillValue: (Int, Int) -> T)
     fun toIterable(): Iterable<T>
     fun forEachIndexed(action: (Int, Int, T) -> Unit)
     fun columns(): List<List<T>>
@@ -33,9 +33,9 @@ abstract class GenericGrid<T>(
         }
     }
 
-    override fun setAllBy(fillValue: (Int, Int) -> T) {
-        forEachIndexed { xIndex, yIndex, _ -> set(xIndex, yIndex, fillValue(xIndex, yIndex)) }
-    }
+//    override fun setAllBy(fillValue: (Int, Int) -> T) {
+//        forEachIndexed { xIndex, yIndex, _ -> set(xIndex, yIndex, fillValue(xIndex, yIndex)) }
+//    }
 
     override fun toIterable(): Iterable<T> = columns.flatten()
 

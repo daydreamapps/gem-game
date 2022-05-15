@@ -4,11 +4,10 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.View
-import com.daydreamapplications.gemgame.*
+import androidx.core.content.res.ResourcesCompat
 import kotlin.math.max
 
 class GameView @JvmOverloads constructor(
@@ -65,24 +64,6 @@ class GameView @JvmOverloads constructor(
         val gestureDetector = GestureDetector(context, gestureListener)
         setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
     }
-
-    private fun getDrawable(gemType: GemType): Drawable {
-        return when (gemType) {
-            GemType.BLOOD -> gemBloodDrawable
-            GemType.COIN -> gemCoinDrawable
-            GemType.DIAMOND -> gemDarkDrawable
-            GemType.EMERALD -> gemEmeraldDrawable
-            GemType.SAPPHIRE -> gemSapphireDrawable
-        }
-    }
-
-    private val gemBloodDrawable: Drawable = resources.getDrawable(R.drawable.ic_gem_ruby, null)
-    private val gemCoinDrawable: Drawable = resources.getDrawable(R.drawable.ic_gem_citrine, null)
-    private val gemDarkDrawable: Drawable = resources.getDrawable(R.drawable.ic_gem_amethyst, null)
-    private val gemEmeraldDrawable: Drawable = resources.getDrawable(R.drawable.ic_gem_square, null)
-    private val gemSapphireDrawable: Drawable =
-        resources.getDrawable(R.drawable.ic_gem_sapphire, null)
-    private val selectorDrawable: Drawable = resources.getDrawable(R.drawable.ic_selector, null)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -280,7 +261,7 @@ class GameView @JvmOverloads constructor(
         canvas: Canvas,
     ) {
         gemGrid.forEachIndexed { xIndex, yIndex, gemType ->
-            renderGem(canvas, xIndex, yIndex, getDrawable(gemType))
+            gemType.draw(canvas = canvas, xIndex = xIndex, yIndex = yIndex)
         }
 
         selectedGem?.apply {
@@ -288,7 +269,9 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private fun renderGem(canvas: Canvas, xIndex: Int, yIndex: Int, drawable: Drawable) {
+    private fun GemType.draw(canvas: Canvas, xIndex: Int, yIndex: Int) {
+        val drawable = drawable(resources) ?: return
+
         updateRectBounds(
             xIndex = xIndex,
             yIndex = yIndex,
@@ -300,6 +283,7 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun renderSelector(canvas: Canvas, xIndex: Int, yIndex: Int) {
+        val selectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_selector, null) ?: return
 
         updateRectBounds(
             xIndex = xIndex,
@@ -311,7 +295,7 @@ class GameView @JvmOverloads constructor(
         selectorDrawable.draw(canvas)
     }
 
-    private fun updateRectBounds(
+    private fun Rect.moveTo(
         xIndex: Int,
         yIndex: Int,
         radius: Int = gemRadius,
@@ -322,12 +306,18 @@ class GameView @JvmOverloads constructor(
         val x = ((xIndex + 0.5) * squareWidthPixels).toInt()
         val y = ((yIndex + 0.5) * squareWidthPixels).toInt()
 
-        rect.apply {
-            left = x + horizontalOffset - radius
-            top = y + verticalOffset - radius
-            right = x + horizontalOffset + radius
-            bottom = y + verticalOffset + radius
-        }
+        left = x + horizontalOffset - radius
+        top = y + verticalOffset - radius
+        right = x + horizontalOffset + radius
+        bottom = y + verticalOffset + radius
+    }
+
+    private fun updateRectBounds(
+        xIndex: Int,
+        yIndex: Int,
+        radius: Int = gemRadius,
+    ) {
+        rect.moveTo(xIndex, yIndex, radius)
     }
 
     // helper functions

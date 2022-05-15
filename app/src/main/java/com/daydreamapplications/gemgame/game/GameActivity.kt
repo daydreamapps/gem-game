@@ -1,5 +1,7 @@
 package com.daydreamapplications.gemgame.game
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +40,14 @@ class GameActivity : AppCompatActivity(), Score {
             current.collect {
                 textView.text = "Score: $it"
             }
+        }
+    }
+
+    companion object {
+
+        fun startGame(context: Context) {
+            Intent(context, GameActivity::class.java)
+                .let(context::startActivity)
         }
     }
 }

@@ -5,7 +5,7 @@ interface IGrid<T> {
     val width: Int
     val height: Int
 
-    fun setAllBy(fillValue: (Int, Int) -> T)
+//    fun setAllBy(fillValue: (Int, Int) -> T)
     fun toIterable(): Iterable<T>
     fun forEachIndexed(action: (Int, Int, T) -> Unit)
     fun columns(): List<List<T>>
@@ -16,7 +16,9 @@ interface IGrid<T> {
     operator fun get(xIndex: Int, yIndex: Int): T
     operator fun set(xIndex: Int, yIndex: Int, value: T)
     operator fun get(coordinates: Coordinates): T
+    fun getOrNull(coordinates: Coordinates): T?
     operator fun set(coordinates: Coordinates, value: T)
+    fun contains(coordinates: Coordinates): Boolean
 }
 
 
@@ -33,9 +35,9 @@ abstract class GenericGrid<T>(
         }
     }
 
-    override fun setAllBy(fillValue: (Int, Int) -> T) {
-        forEachIndexed { xIndex, yIndex, _ -> set(xIndex, yIndex, fillValue(xIndex, yIndex)) }
-    }
+//    override fun setAllBy(fillValue: (Int, Int) -> T) {
+//        forEachIndexed { xIndex, yIndex, _ -> set(xIndex, yIndex, fillValue(xIndex, yIndex)) }
+//    }
 
     override fun toIterable(): Iterable<T> = columns.flatten()
 
@@ -65,6 +67,10 @@ abstract class GenericGrid<T>(
 
     override fun set(xIndex: Int, yIndex: Int, value: T) {
         columns[xIndex][yIndex] = value
+    }
+
+    override fun getOrNull(coordinates: Coordinates): T? {
+        TODO("Not yet implemented")
     }
 
     override fun get(coordinates: Coordinates): T = coordinates.run { get(x, y) }

@@ -1,59 +1,24 @@
 package com.daydreamapplications.gemgame
 
+import android.util.Log
+import com.daydreamapplications.gemgame.v2.Grid
+import com.daydreamapplications.gemgame.v2.Group
+import com.daydreamapplications.gemgame.v2.GroupBuilder
+
 class GameGrid(
     width: Int,
-    height: Int
-) : GenericGrid<GemType>(width, height, { _, _ -> randomGemType() }) {
+    height: Int,
+) : Grid<GemType>(width, height, { _, _ -> randomGemType() }) {
 
 
-    fun getAllMatches(): List<MatchedGroupArray> {
-
-        val horizontalMatches = rows()
-            .mapIndexed { yIndex, _ -> getMatchesInColumn(yIndex) }
-            .flatten()
-
-        val verticalMatches = columns()
-            .mapIndexed { xIndex, _ -> getMatchesInRow(xIndex) }
-            .flatten()
-
-        return horizontalMatches + verticalMatches
-    }
-
-    fun getMatchesInRow(yIndex: Int): List<MatchedGroupArray> = getMatches(row(yIndex), Axis.HORIZONTAL, yIndex)
-
-    fun getMatchesInColumn(xIndex: Int): List<MatchedGroupArray> = getMatches(column(xIndex), Axis.VERTICAL, xIndex)
-
-    private fun getMatches(range: Iterable<GemType>, axis: Axis, perpendicularIndex: Int): ArrayList<MatchedGroupArray> {
-        val list = ArrayList<MatchedGroupArray>()
-        val lastIndex = range.toList().lastIndex
-
-        var type: GemType = range.first()
-        var start = 0
-        var size = 0
-
-        range.forEachIndexed { index, gemType ->
-            val gemsMatch = gemType == type
-            if (gemsMatch && index != lastIndex) {
-                size = index - start + 1
-            } else {
-                if (gemsMatch) size++
-                if (size > 2) {
-                    list.add(
-                        if (axis == Axis.HORIZONTAL) {
-                            MatchedGroupArray(type, Point(x = start, y = perpendicularIndex), size, axis)
-                        } else {
-                            MatchedGroupArray(type, Point(x = perpendicularIndex, y = start), size, axis)
-                        }
-                    )
-                }
-
-                type = range.toList()[index]
-                start = index
-                size = 1
-            }
-        }
-
-        return list
+    fun getAllMatches(): List<Group<GemType>> {
+        val start = System.currentTimeMillis()
+        val toList = GroupBuilder(this).allGroups()
+            .mapNotNull(Group<GemType>::match3)
+            .toList()
+        val end = System.currentTimeMillis()
+        Log.v("Match Timing:", "${end - start}ms")
+        return toList
     }
 
     fun swapGems(first: Coordinates, second: Coordinates) {
@@ -67,7 +32,11 @@ class GameGrid(
     fun reset() {
         columns().forEachIndexed { xIndex, _ -> removeAllInColumn(xIndex) }
 
-        if (getAllMatches().isNotEmpty()) {
+        val matches = getAllMatches()
+        if (matches.isNotEmpty()) {
+            Log.i("Grid init", "${matches.size} groups found")
+            Log.i("Grid init", "\n $this")
+
             reset()
         }
     }
@@ -125,6 +94,6 @@ class GameGrid(
     }
 
     fun print() {
-        print { it.name.first() }
+        super.toString()
     }
 }

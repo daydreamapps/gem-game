@@ -1,9 +1,9 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 import android.util.Log
-import com.daydreamapplications.gemgame.v2.Grid
-import com.daydreamapplications.gemgame.v2.Group
-import com.daydreamapplications.gemgame.v2.GroupBuilder
+import com.daydreamapplications.gemgame.game.v2.Grid
+import com.daydreamapplications.gemgame.game.v2.Group
+import com.daydreamapplications.gemgame.game.v2.GroupBuilder
 
 class GameGrid(
     width: Int,

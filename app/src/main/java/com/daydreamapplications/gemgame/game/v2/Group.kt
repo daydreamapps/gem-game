@@ -1,7 +1,7 @@
-package com.daydreamapplications.gemgame.v2
+package com.daydreamapplications.gemgame.game.v2
 
-import com.daydreamapplications.gemgame.Coordinates
-import com.daydreamapplications.gemgame.Direction
+import com.daydreamapplications.gemgame.game.Coordinates
+import com.daydreamapplications.gemgame.game.Direction
 
 data class Group<T : Any>(
     val value: T,

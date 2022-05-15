@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
+import com.daydreamapplications.gemgame.R
 import kotlin.math.max
 
 class GameView @JvmOverloads constructor(

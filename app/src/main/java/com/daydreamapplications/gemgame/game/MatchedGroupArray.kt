@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 data class MatchedGroupArray(
     val gemType: GemType,

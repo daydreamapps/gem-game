@@ -21,6 +21,8 @@ class GameView @JvmOverloads constructor(
     private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
+    var score: Score? = null
+
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
 
@@ -338,6 +340,8 @@ class GameView @JvmOverloads constructor(
                 coordinates.groupBy { it.x }.forEach { (xIndex, coordinates) ->
                     gemRemovalArray[xIndex] += coordinates.size
                 }
+
+                score?.change(by = sumOf { it.score })
 
                 remove(coordinates, gemRemovalArray)
             }

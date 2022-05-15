@@ -24,6 +24,9 @@ data class Group<T : Any>(
             ).takeIf { it.isNotEmpty() }
         }
 
+    val score: Int
+        get() = coordinates.size * coordinates.size
+
     fun horizontalMatch(coordinate: Coordinates): Boolean {
         coordinate.run {
             val leftest = offset(Direction.LEFT, 2)

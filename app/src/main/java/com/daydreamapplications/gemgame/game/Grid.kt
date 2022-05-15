@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 interface IGrid<T> {
 

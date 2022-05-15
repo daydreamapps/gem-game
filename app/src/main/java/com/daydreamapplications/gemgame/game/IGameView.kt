@@ -1,6 +1,4 @@
-package com.daydreamapplications.gemgame
-
-import com.daydreamapplications.gemgame.Coordinates
+package com.daydreamapplications.gemgame.game
 
 interface IGameView {
 

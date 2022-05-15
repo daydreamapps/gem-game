@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame.v2
+package com.daydreamapplications.gemgame.game.v2
 
 import com.daydreamapplications.gemgame.assertEquals
 import org.junit.Test

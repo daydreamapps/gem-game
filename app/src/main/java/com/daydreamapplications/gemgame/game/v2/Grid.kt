@@ -1,7 +1,7 @@
-package com.daydreamapplications.gemgame.v2
+package com.daydreamapplications.gemgame.game.v2
 
-import com.daydreamapplications.gemgame.Coordinates
-import com.daydreamapplications.gemgame.IGrid
+import com.daydreamapplications.gemgame.game.Coordinates
+import com.daydreamapplications.gemgame.game.IGrid
 
 open class Grid<T : Any>(
     override val width: Int,

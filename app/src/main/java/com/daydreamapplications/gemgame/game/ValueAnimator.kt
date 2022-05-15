@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 import android.animation.Animator
 import android.animation.ValueAnimator

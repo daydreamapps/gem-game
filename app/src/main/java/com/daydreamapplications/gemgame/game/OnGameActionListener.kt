@@ -1,7 +1,4 @@
-package com.daydreamapplications.gemgame
-
-import com.daydreamapplications.gemgame.Coordinates
-import com.daydreamapplications.gemgame.Direction
+package com.daydreamapplications.gemgame.game
 
 interface OnGameActionListener {
 

@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 fun <T> Array<Array<T>>.toIterable(): Iterable<T> = toList().flatMap { it.toList() }
 

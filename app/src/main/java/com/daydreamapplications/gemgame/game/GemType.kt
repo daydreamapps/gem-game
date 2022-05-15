@@ -1,9 +1,10 @@
-package com.daydreamapplications.gemgame
+package com.daydreamapplications.gemgame.game
 
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
+import com.daydreamapplications.gemgame.R
 import java.util.*
 
 enum class GemType(

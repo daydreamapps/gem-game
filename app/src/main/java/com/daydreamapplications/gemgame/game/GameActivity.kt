@@ -3,9 +3,12 @@ package com.daydreamapplications.gemgame.game
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.databinding.ActivityGameBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +26,8 @@ class GameActivity : AppCompatActivity(), Score {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.setSubtitle("text")
+        supportActionBar?.setSubtitle("text")
 
         ActivityGameBinding.inflate(layoutInflater).apply {
 
@@ -32,6 +37,21 @@ class GameActivity : AppCompatActivity(), Score {
             observeCurrentScore(scoreValue)
 
             setContentView(root)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.game_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_quit -> {
+                finish()
+                true
+            }
+            else -> false
         }
     }
 

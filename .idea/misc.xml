@@ -5,7 +5,9 @@
       <map>
         <entry key="app/src/main/res/drawable/ic_gem_amethyst.xml" value="0.1705" />
         <entry key="app/src/main/res/drawable/ic_selector.xml" value="0.175" />
+        <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.17144346013548722" />
+        <entry key="app/src/main/res/menu/game_menu.xml" value="0.16822916666666668" />
       </map>
     </option>
   </component>

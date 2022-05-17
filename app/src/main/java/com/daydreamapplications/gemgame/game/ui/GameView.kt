@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame.game
+package com.daydreamapplications.gemgame.game.ui
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -7,9 +7,23 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import com.daydreamapplications.gemgame.R
+import com.daydreamapplications.gemgame.game.*
 import kotlin.math.max
+
+@Composable
+fun GameView(
+    score: Score? = null,
+) {
+    AndroidView(factory = {
+        GameView(it).also {
+            it.score = score
+        }
+    })
+}
 
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,

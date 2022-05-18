@@ -63,14 +63,11 @@ class GameActivity : AppCompatActivity(), Score {
                     }
                 }
             }
+
             if (quitDialogShown) {
                 QuitDialog(
-                    onDismiss = {
-                        quitDialogShown = false
-                    },
-                    onQuit = {
-                        finish()
-                    },
+                    onDismiss = { quitDialogShown = false },
+                    onQuit = ::finish,
                 )
             }
         }

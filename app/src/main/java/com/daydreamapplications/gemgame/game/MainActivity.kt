@@ -1,8 +1,15 @@
 package com.daydreamapplications.gemgame.game
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import com.daydreamapplications.gemgame.databinding.ActivityMainBinding
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -11,15 +18,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ActivityMainBinding.inflate(layoutInflater).apply {
+        setContent {
+            val context = LocalContext.current
 
-            lifecycleOwner = this@MainActivity
-
-            startGame.setOnClickListener { view ->
-                GameActivity.startGame(view.context)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { GameActivity.startGame(context) }
+                    ) {
+                        Text(text = "Start Game")
+                    }
+                }
             }
-
-            setContentView(root)
         }
     }
 }

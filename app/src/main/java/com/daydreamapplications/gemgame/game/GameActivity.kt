@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.daydreamapplications.gemgame.R
+import com.daydreamapplications.gemgame.game.ui.EndGameDialog
 import com.daydreamapplications.gemgame.game.ui.GameView
 import com.daydreamapplications.gemgame.game.ui.QuitDialog
 import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
@@ -27,6 +28,8 @@ import kotlinx.coroutines.delay
 class GameActivity : AppCompatActivity(), Score {
 
     override val current: MutableState<Int> = mutableStateOf(0)
+
+    private val isGameComplete: MutableState<Boolean> = mutableStateOf(false)
     private val timeRemainingInSeconds: MutableState<Int> = mutableStateOf(60)
 
     override fun change(by: Int) {
@@ -41,12 +44,13 @@ class GameActivity : AppCompatActivity(), Score {
                 delay(1000)
                 timeRemainingInSeconds.value--
             }
-            finish()
+            isGameComplete.value = true
             cancel()
         }
 
         setContent {
             val score: Int by remember { current }
+            val gameComplete: Boolean by remember { isGameComplete }
             val secondsRemaining: Int by remember { timeRemainingInSeconds }
 
             var quitDialogShown: Boolean by remember { mutableStateOf(false) }
@@ -89,6 +93,13 @@ class GameActivity : AppCompatActivity(), Score {
                 QuitDialog(
                     onDismiss = { quitDialogShown = false },
                     onQuit = ::finish,
+                )
+            }
+
+            if (gameComplete) {
+                EndGameDialog(
+                    score = score,
+                    onConfirm = { finish() },
                 )
             }
         }

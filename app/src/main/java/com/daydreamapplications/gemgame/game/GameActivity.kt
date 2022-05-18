@@ -6,22 +6,28 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.game.ui.GameView
 import com.daydreamapplications.gemgame.game.ui.QuitDialog
 import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), Score {
 
     override val current: MutableState<Int> = mutableStateOf(0)
+    private val timeRemainingInSeconds: MutableState<Int> = mutableStateOf(60)
 
     override fun change(by: Int) {
         current.value += by
@@ -30,8 +36,19 @@ class GameActivity : AppCompatActivity(), Score {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        lifecycleScope.launchWhenResumed {
+            while (timeRemainingInSeconds.value > 0) {
+                delay(1000)
+                timeRemainingInSeconds.value--
+            }
+            finish()
+            cancel()
+        }
+
         setContent {
             val score: Int by remember { current }
+            val secondsRemaining: Int by remember { timeRemainingInSeconds }
+
             var quitDialogShown: Boolean by remember { mutableStateOf(false) }
 
             GemGameTheme {
@@ -60,6 +77,10 @@ class GameActivity : AppCompatActivity(), Score {
                     ) {
                         GameView(this as Score)
                         Text(text = "Score: $score")
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End,
+                            text = "Time Remaining: $secondsRemaining")
                     }
                 }
             }

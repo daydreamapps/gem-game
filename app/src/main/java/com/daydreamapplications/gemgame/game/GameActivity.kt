@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.daydreamapplications.gemgame.R
+import com.daydreamapplications.gemgame.data.scores.ScoreDatabase
 import com.daydreamapplications.gemgame.game.ui.EndGameDialog
 import com.daydreamapplications.gemgame.game.ui.GameView
 import com.daydreamapplications.gemgame.game.ui.QuitDialog
@@ -23,9 +24,14 @@ import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), Score {
+
+    @Inject
+    lateinit var scoreDatabase: ScoreDatabase
 
     override val current: MutableState<Int> = mutableStateOf(0)
 
@@ -99,7 +105,17 @@ class GameActivity : AppCompatActivity(), Score {
             if (gameComplete) {
                 EndGameDialog(
                     score = score,
-                    onConfirm = { finish() },
+                    onConfirm = {
+                        lifecycleScope.launch {
+                            scoreDatabase.scoreDao().insert(
+                                com.daydreamapplications.gemgame.data.scores.Score(
+                                    timeInMillis = System.currentTimeMillis(),
+                                    points = score,
+                                )
+                            )
+                            finish()
+                        }
+                    },
                 )
             }
         }

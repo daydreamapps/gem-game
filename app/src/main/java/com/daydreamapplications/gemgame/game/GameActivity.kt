@@ -36,7 +36,7 @@ class GameActivity : AppCompatActivity(), Score {
     override val current: MutableState<Int> = mutableStateOf(0)
 
     private val isGameComplete: MutableState<Boolean> = mutableStateOf(false)
-    private val timeRemainingInSeconds: MutableState<Int> = mutableStateOf(60)
+    private val timeRemainingInSeconds: MutableState<Int> = mutableStateOf(5)
 
     override fun change(by: Int) {
         current.value += by

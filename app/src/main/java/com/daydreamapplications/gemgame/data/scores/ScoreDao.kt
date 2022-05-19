@@ -1,5 +1,6 @@
 package com.daydreamapplications.gemgame.data.scores
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface ScoreDao {
 
     @Query("SELECT * FROM score")
-    fun getAll(): Flow<List<Score>>
+    fun getAll(): LiveData<List<Score>>
 
     @Insert
     suspend fun insert(score: Score)

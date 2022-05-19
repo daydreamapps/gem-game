@@ -2,6 +2,7 @@ package com.daydreamapplications.gemgame.data
 
 import android.content.Context
 import androidx.room.Room
+import com.daydreamapplications.gemgame.data.scores.ScoreDao
 import com.daydreamapplications.gemgame.data.scores.ScoreDatabase
 import dagger.Module
 import dagger.Provides
@@ -21,4 +22,7 @@ class DataModule {
             "score-database"
         ).build()
     }
+
+    @Provides
+    fun provideScoreDao(scoreDatabase: ScoreDatabase): ScoreDao = scoreDatabase.scoreDao()
 }

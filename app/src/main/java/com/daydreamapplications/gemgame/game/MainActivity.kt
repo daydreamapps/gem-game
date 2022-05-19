@@ -9,7 +9,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val context = LocalContext.current
 
-            val score: State<List<Score>> = scoreDatabase.scoreDao().getAll().collectAsState(initial = emptyList())
+            val score: State<List<Score>> = scoreDatabase.scoreDao().getAll().observeAsState(initial = emptyList())
 
             GemGameTheme {
                 Scaffold(

@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.daydreamapplications.gemgame.idle.IdleActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,20 +22,25 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val context = LocalContext.current
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Row(
+                modifier = Modifier.fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Button(
                         onClick = { GameActivity.startGame(context) }
                     ) {
                         Text(text = "Start Game")
+                    }
+                    Button(
+                        onClick = { IdleActivity.startActivity(context) }
+                    ) {
+                        Text(text = "Idle")
                     }
                 }
             }

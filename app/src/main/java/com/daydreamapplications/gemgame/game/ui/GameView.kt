@@ -12,6 +12,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.game.*
+import com.daydreamapplications.gemgame.idle.IdleController
 import kotlin.math.max
 
 @Composable
@@ -40,8 +41,8 @@ class GameView @JvmOverloads constructor(
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
 
-    private var widthSquares: Int = 8
-    private var heightSquares: Int = 5
+    var widthSquares: Int = 8
+    var heightSquares: Int = 5
 
     private var dropDuration: Long = 100L
     private var hideDuration: Long = 500L
@@ -57,6 +58,16 @@ class GameView @JvmOverloads constructor(
     private var gemRadius: Int = 0
 
     private val gestureListener: GemViewGestureListener
+
+    var idleController: IdleController? = null
+        set(value) {
+            field = value
+            value?.apply {
+                widthSquares = width
+                heightSquares = height
+                onGameActionListener = this@GameView
+            }
+        }
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
@@ -80,6 +91,13 @@ class GameView @JvmOverloads constructor(
         gestureListener = GemViewGestureListener(widthSquares, heightSquares, this)
         val gestureDetector = GestureDetector(context, gestureListener)
         setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
+    }
+
+    override fun onDetachedFromWindow() {
+        idleController?.onGameActionListener = null
+        idleController = null
+
+        super.onDetachedFromWindow()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

@@ -1,3 +1,21 @@
 package com.daydreamapplications.gemgame.game
 
-enum class Direction { UP, DOWN, LEFT, RIGHT, NONE }
+import kotlin.random.Random
+
+enum class Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    NONE,
+
+    ;
+
+    companion object {
+
+        fun random(): Direction {
+            val index = Random.nextInt(4)
+            return values()[index]
+        }
+    }
+}

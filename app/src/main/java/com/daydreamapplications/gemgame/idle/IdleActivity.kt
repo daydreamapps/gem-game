@@ -14,9 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import com.daydreamapplications.gemgame.idle.upgrades.UpgradesRepository
 import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class IdleActivity : AppCompatActivity() {
 
     companion object {
@@ -28,6 +32,9 @@ class IdleActivity : AppCompatActivity() {
     }
 
     private val idleController: IdleController = IdleController()
+
+    @Inject
+    lateinit var upgradesRepository: UpgradesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +69,7 @@ class IdleActivity : AppCompatActivity() {
                             .padding(8.dp),
                         color = MaterialTheme.colors.background
                     ) {
-                        IdleContent(idleController)
+                        IdleContent(idleController, upgradesRepository)
                     }
                 }
             }

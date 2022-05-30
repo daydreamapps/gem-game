@@ -40,7 +40,9 @@ fun IdleContent(
         UpgradeView(
             modifier = Modifier.fillMaxWidth(),
             upgrades = upgradesRepository.upgrades.collectAsState(initial = emptyList()),
+            score = score,
             onSelected = { upgrade ->
+                score.change(-upgrade.cost)
                 // TODO: reduce score by upgrade cost
                 // TODO: apply upgrade to controller
                 upgradesRepository.removeUpgradeFromList(upgrade)

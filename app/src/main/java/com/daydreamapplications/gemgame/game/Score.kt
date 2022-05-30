@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Score {
 
-    val current: MutableState<Int>
+    val current: MutableState<Long>
 
-    fun change(by: Int)
+    fun change(by: Number)
 }

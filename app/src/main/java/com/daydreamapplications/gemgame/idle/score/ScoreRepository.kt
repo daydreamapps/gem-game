@@ -9,9 +9,9 @@ class ScoreRepository @Inject constructor(
 ) : Score {
 
     // TODO: persistence
-    override val current: MutableState<Int> = mutableStateOf(0)
+    override val current: MutableState<Long> = mutableStateOf(0)
 
-    override fun change(by: Int) {
-        current.value = +by
+    override fun change(by: Number) {
+        current.value += by.toLong()
     }
 }

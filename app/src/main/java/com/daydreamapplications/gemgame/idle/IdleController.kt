@@ -10,6 +10,8 @@ class IdleController(
     var height: Int = 5,
 ) {
 
+    // TODO: swap duration
+
     var onGameActionListener: OnGameActionListener? = null
 
     fun move() {

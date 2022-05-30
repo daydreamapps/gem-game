@@ -28,7 +28,11 @@ fun IdleContent(
         UpgradeView(
             modifier = Modifier.fillMaxWidth(),
             upgrades = upgradesRepository.upgrades.collectAsState(initial = emptyList()),
-            onSelected = { /*TODO*/ },
+            onSelected = { upgrade ->
+                // TODO: reduce score by upgrade cost
+                // TODO: apply upgrade to controller
+                upgradesRepository.removeUpgradeFromList(upgrade)
+            },
         )
     }
 }

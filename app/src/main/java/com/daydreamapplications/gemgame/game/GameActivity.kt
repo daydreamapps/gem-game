@@ -27,13 +27,13 @@ import kotlinx.coroutines.delay
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), Score {
 
-    override val current: MutableState<Int> = mutableStateOf(0)
+    override val current: MutableState<Long> = mutableStateOf(0)
 
     private val isGameComplete: MutableState<Boolean> = mutableStateOf(false)
     private val timeRemainingInSeconds: MutableState<Int> = mutableStateOf(60)
 
-    override fun change(by: Int) {
-        current.value += by
+    override fun change(by: Number) {
+        current.value += by.toLong()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class GameActivity : AppCompatActivity(), Score {
         }
 
         setContent {
-            val score: Int by remember { current }
+            val score: Number by remember { current }
             val gameComplete: Boolean by remember { isGameComplete }
             val secondsRemaining: Int by remember { timeRemainingInSeconds }
 

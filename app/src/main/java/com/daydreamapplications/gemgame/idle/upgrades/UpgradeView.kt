@@ -9,11 +9,13 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.daydreamapplications.gemgame.game.Score
 
 @Composable
 fun UpgradeView(
     modifier: Modifier = Modifier,
     upgrades: State<List<Upgrade>>,
+    score: Score,
     onSelected: (Upgrade) -> Unit,
 ) {
     Surface(
@@ -29,7 +31,11 @@ fun UpgradeView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 content = {
                     items(items = upgrades.value) {
-                        UpgradeButton(it, onSelected)
+                        UpgradeButton(
+                            upgrade = it,
+                            score = score,
+                            onClick = onSelected,
+                        )
                     }
                 }
             )
@@ -38,20 +44,11 @@ fun UpgradeView(
 }
 
 @Composable
-fun UpgradeButton1(upgrade: Upgrade, onClick: (Upgrade) -> Unit) {
-    Button(
-        modifier = Modifier.size(width = 150.dp, height = 100.dp),
-        onClick = { onClick(upgrade) }
-    ) {
-        Column {
-            Text(text = upgrade.type.title, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-            Text(text = "${upgrade.multiplier}", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-        }
-    }
-}
-
-@Composable
-fun UpgradeButton(upgrade: Upgrade, onClick: (Upgrade) -> Unit) {
+fun UpgradeButton(
+    upgrade: Upgrade,
+    score: Score,
+    onClick: (Upgrade) -> Unit,
+) {
     Card(
         modifier = Modifier.size(width = 150.dp, height = 150.dp),
     ) {
@@ -66,10 +63,11 @@ fun UpgradeButton(upgrade: Upgrade, onClick: (Upgrade) -> Unit) {
             }
             Button(
                 modifier = Modifier.weight(1f),
+                enabled = upgrade.cost < score.current.value,
                 onClick = { onClick(upgrade) }
             ) {
                 Column {
-                    Text(text = "Upgrade\n100K", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    Text(text = "Upgrade\n${upgrade.cost}", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 }
             }
         }

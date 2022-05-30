@@ -17,12 +17,12 @@ class UpgradesRepository @Inject constructor() {
     companion object {
 
         private val stubUpgrades = listOf(
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
-            Upgrade(type = UpgradeType.SWAP_SPEED, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 100, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 200, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 400, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 800, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 1600, multiplier = 0.75),
+            Upgrade(type = UpgradeType.SWAP_SPEED, cost = 3200, multiplier = 0.75),
         )
     }
 }

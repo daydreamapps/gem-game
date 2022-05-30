@@ -17,7 +17,7 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun EndGameDialog(
-    score: Int,
+    score: Number,
     onConfirm: () -> Unit = {},
 ) {
     Dialog(
@@ -36,7 +36,7 @@ fun EndGameDialog(
 
 @Composable
 fun EndDialogContent(
-    score: Int,
+    score: Number,
     onConfirm: () -> Unit = {},
 ) {
     Card(

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,8 +27,10 @@ fun GameView(
     })
 }
 
+
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
+    private val immutableGameConfig: GameConfig = GameConfig.default
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
@@ -36,18 +39,17 @@ class GameView @JvmOverloads constructor(
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
+    // this game config is only used for the timing and not its width and height
+    // TODO: replace with timing specific component
     var gameConfig: GameConfig = GameConfig.default
-        set(value) {
-            field = value
-            gemGrid = GameGrid(value.width, value.height)
-            gestureListener = GemViewGestureListener(value.width, value.height, this)
 
-            val gestureDetector = GestureDetector(context, gestureListener)
-            setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
-        }
+    private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+    private val gestureListener: GemViewGestureListener = GemViewGestureListener(
+        immutableGameConfig.width,
+        immutableGameConfig.height,
+        this
+    )
 
-    private var gemGrid: GameGrid? = null
-    private var gestureListener: GemViewGestureListener? = null
 
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
@@ -56,9 +58,6 @@ class GameView @JvmOverloads constructor(
     private var hideDuration: Long = 500L
 
     private var gridPaddingPercent: Float = 0.1F
-
-    private var widthRange: IntRange = 0..0
-    private var heightRange: IntRange = 0..0
 
     private var squareWidthPixels: Int = 0
 
@@ -84,7 +83,10 @@ class GameView @JvmOverloads constructor(
             }
         }
 
-        gameConfig = GameConfig.default
+        val gestureDetector = GestureDetector(context, gestureListener)
+        val listener: (v: View, event: MotionEvent) -> Boolean =
+            { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
+        setOnTouchListener(listener)
     }
 
     override fun onDetachedFromWindow() {
@@ -97,7 +99,7 @@ class GameView @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        val ratio = gameConfig.width / gameConfig.height.toFloat()
+        val ratio = immutableGameConfig.width / immutableGameConfig.height.toFloat()
 
         var width = measuredWidth
         var height = measuredHeight
@@ -118,7 +120,7 @@ class GameView @JvmOverloads constructor(
 
     override fun initialise() {
         // Remove matching groups from grid (clean start state)
-        gemGrid?.reset()
+        gemGrid.reset()
 
         verticalOffsets = buildIntGrid(0)
         horizontalOffsets = buildIntGrid(0)
@@ -153,7 +155,7 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-                val dropHeights: Array<Array<Int>> = gemGrid?.removeGems(removals) ?: emptyArray()
+                val dropHeights: Array<Array<Int>> = gemGrid.removeGems(removals)
                 drop(dropHeights, gemRemovalArray)
             }
 
@@ -259,7 +261,7 @@ class GameView @JvmOverloads constructor(
 
         val endCoordinates = coordinates.offset(direction)
 
-        gemGrid?.swapGems(coordinates, endCoordinates)
+        gemGrid.swapGems(coordinates, endCoordinates)
 
         swap(coordinates to endCoordinates)
     }
@@ -267,12 +269,9 @@ class GameView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        widthRange = 0 until gameConfig.width
-        heightRange = 0 until gameConfig.height
-        squareWidthPixels = width / gameConfig.width
-
+        squareWidthPixels = width / immutableGameConfig.width
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
-        gestureListener?.squareWidthPixels = squareWidthPixels
+        gestureListener.squareWidthPixels = squareWidthPixels
 
         if (!isInitialised) initialise()
     }
@@ -288,7 +287,7 @@ class GameView @JvmOverloads constructor(
     private fun renderGems(
         canvas: Canvas,
     ) {
-        gemGrid?.forEachIndexed { xIndex, yIndex, gemType ->
+        gemGrid.forEachIndexed { xIndex, yIndex, gemType ->
             gemType.draw(canvas = canvas, xIndex = xIndex, yIndex = yIndex)
         }
 
@@ -311,7 +310,8 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun renderSelector(canvas: Canvas, xIndex: Int, yIndex: Int) {
-        val selectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_selector, null) ?: return
+        val selectorDrawable =
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_selector, null) ?: return
 
         updateRectBounds(
             xIndex = xIndex,
@@ -351,16 +351,16 @@ class GameView @JvmOverloads constructor(
     // helper functions
 
     private fun buildIntGrid(init: Int): Array<Array<Int>> {
-        return Array(gameConfig.width ) { Array(gameConfig.height) { init } }
+        return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }
     }
 
     private fun buildIntGrid(init: (Int, Int) -> Int = { _, _ -> 0 }): Array<Array<Int>> {
-        return Array(gameConfig.width) { x -> Array(gameConfig.height) { y -> init(x, y) } }
+        return Array(immutableGameConfig.width) { x -> Array(immutableGameConfig.height) { y -> init(x, y) } }
     }
 
-    private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(gameConfig.width)) {
+    private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {
 
-        gemGrid?.getAllMatches()?.apply {
+        gemGrid.getAllMatches().apply {
             if (isNotEmpty()) {
                 val coordinates = flatten()
 
@@ -372,7 +372,7 @@ class GameView @JvmOverloads constructor(
 
                 remove(coordinates, gemRemovalArray)
             }
-            gemGrid?.print()
+            gemGrid.print()
         }
     }
 }

@@ -40,15 +40,6 @@ class GameView @JvmOverloads constructor(
     var gameConfig: GameConfig = GameConfig.default
         set(value) {
             field = value
-            gemGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
-            gestureListener = GemViewGestureListener(
-                immutableGameConfig.width,
-                immutableGameConfig.height,
-                this
-            )
-
-            val gestureDetector = GestureDetector(context, gestureListener)
-            setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
         }
 
     private var gemGrid: GameGrid? = null
@@ -88,8 +79,15 @@ class GameView @JvmOverloads constructor(
                 recycle()
             }
         }
+        gemGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+        gestureListener = GemViewGestureListener(
+            immutableGameConfig.width,
+            immutableGameConfig.height,
+            this
+        )
 
-        gameConfig = GameConfig.default
+        val gestureDetector = GestureDetector(context, gestureListener)
+        setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
     }
 
     override fun onDetachedFromWindow() {

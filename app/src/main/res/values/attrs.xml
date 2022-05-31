@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="GameView">
-        <attr name="widthSquares" format="integer" />
-        <attr name="heightSquares" format="integer" />
 
         <attr name="gridPaddingPercent" format="float" />
 

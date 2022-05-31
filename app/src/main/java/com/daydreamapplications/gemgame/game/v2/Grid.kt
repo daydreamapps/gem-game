@@ -22,13 +22,6 @@ open class Grid<T : Any>(
             }
         }
 
-//    override fun setAllBy(fillValue: (Int, Int) -> T) {
-//        TODO("Not yet implemented")
-//    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun toIterable(): Iterable<T> = columns.flatten() as List<T>
-
     override fun forEachIndexed(action: (x: Int, y: Int, T) -> Unit) {
         columns.forEachIndexed { xIndex, column ->
             column.forEachIndexed { yIndex, value ->
@@ -49,16 +42,6 @@ open class Grid<T : Any>(
 
     override fun set(xIndex: Int, yIndex: Int, value: T) {
         columns[xIndex][yIndex] = value
-    }
-
-    override fun getOrNull(coordinates: Coordinates): T? {
-        return when {
-            coordinates.x !in 0 until width -> return null
-            coordinates.y !in 0 until height -> return null
-            else -> coordinates.run {
-                get(x, y)
-            }
-        }
     }
 
     override fun get(coordinates: Coordinates): T {
@@ -131,12 +114,10 @@ open class Grid<T : Any>(
             }
 
             fun build(): Grid<T> {
-                return if (rows.isNotEmpty()) {
-                    buildFromRows()
-                } else if (columns.isNotEmpty()) {
-                    buildFromColumns()
-                } else {
-                    throw IllegalStateException("Cannot create grid without either rows or columns")
+                return when {
+                    rows.isNotEmpty() -> buildFromRows()
+                    columns.isNotEmpty() -> buildFromColumns()
+                    else -> throw IllegalStateException("Cannot create grid without either rows or columns")
                 }
             }
 

@@ -91,7 +91,7 @@ class GroupBuilder<T : Any>(
             val squaresToCheck = connected - checkedSquares
 
             squaresToCheck.forEach {
-                if (grid.get(it) == value) {
+                if (grid[it] == value) {
                     groupedSquares.add(it)
                 }
             }

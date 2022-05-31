@@ -24,15 +24,6 @@ class GridTest {
     }
 
     @Test
-    fun `to iterable`() {
-        val grid = Grid.build<Char> {
-            column('a', 'c')
-            column('b', 'd')
-        }
-        grid.toIterable() assertEquals listOf('a', 'c', 'b', 'd')
-    }
-
-    @Test
     fun forEachIndexed() {
         val set = mutableSetOf<Square<Char>>()
         val grid = Grid.build<Char> {

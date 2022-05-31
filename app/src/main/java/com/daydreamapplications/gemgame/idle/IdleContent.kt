@@ -13,6 +13,7 @@ import com.daydreamapplications.gemgame.idle.upgrades.UpgradesRepository
 @Composable
 fun IdleContent(
     idleController: IdleController,
+    idleGameConfig: IdleGameConfig,
     score: Score,
     upgradesRepository: UpgradesRepository,
 ) {
@@ -33,6 +34,7 @@ fun IdleContent(
         ) {
             IdleGameView(
                 idleController = idleController,
+                idleGameConfig = idleGameConfig,
                 score = score,
             )
         }
@@ -43,8 +45,7 @@ fun IdleContent(
             score = score,
             onSelected = { upgrade ->
                 score.change(-upgrade.cost)
-                // TODO: reduce score by upgrade cost
-                // TODO: apply upgrade to controller
+                idleGameConfig.upgrade(upgrade)
                 upgradesRepository.removeUpgradeFromList(upgrade)
             },
         )

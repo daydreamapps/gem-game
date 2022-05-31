@@ -39,6 +39,8 @@ class GameView @JvmOverloads constructor(
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
+    // this game config is only used for the timing and not its width and height
+    // TODO: replace with timing specific component
     var gameConfig: GameConfig = GameConfig.default
 
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)

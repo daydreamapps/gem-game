@@ -6,6 +6,5 @@
 
         <attr name="dropDuration" format="integer" />
         <attr name="hideDuration" format="integer" />
-        <attr name="swapDuration" format="integer" />
     </declare-styleable>
 </resources>

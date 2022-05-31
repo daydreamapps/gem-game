@@ -54,7 +54,6 @@ class GameView @JvmOverloads constructor(
 
     private var dropDuration: Long = 100L
     private var hideDuration: Long = 500L
-    private var swapDuration = 150L
 
     private var gridPaddingPercent: Float = 0.1F
 
@@ -78,7 +77,6 @@ class GameView @JvmOverloads constructor(
             try {
                 dropDuration = getInteger(R.styleable.GameView_dropDuration, 100).toLong()
                 hideDuration = getInteger(R.styleable.GameView_hideDuration, 500).toLong()
-                swapDuration = getInteger(R.styleable.GameView_swapDuration, 150).toLong()
 
                 gridPaddingPercent = getFloat(R.styleable.GameView_gridPaddingPercent, 0.1F)
             } finally {
@@ -220,7 +218,7 @@ class GameView @JvmOverloads constructor(
 
         ValueAnimator.ofInt(squareWidthPixels, 0).apply {
 
-            duration = swapDuration
+            duration = gameConfig.swapDurationMs
 
             addUpdateListener {
                 applyOffset(it.animatedValue as Int)
@@ -269,7 +267,6 @@ class GameView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        swapDuration = hideDuration / 3
         widthRange = 0 until gameConfig.width
         heightRange = 0 until gameConfig.height
         squareWidthPixels = width / gameConfig.width

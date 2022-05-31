@@ -6,7 +6,7 @@ interface GameConfig {
     val height: Int
 //    val dropDurationMs: Long
 //    val hideDurationMs: Long
-//    val swapDurationMs: Long
+    val swapDurationMs: Long
 
     companion object {
 
@@ -16,7 +16,7 @@ interface GameConfig {
                 override val height: Int = 6
 //                override val dropDurationMs: Long = 100L
 //                override val hideDurationMs: Long = 500L
-//                override val swapDurationMs: Long = 150L
+                override val swapDurationMs: Long = 500L
             }
     }
 }

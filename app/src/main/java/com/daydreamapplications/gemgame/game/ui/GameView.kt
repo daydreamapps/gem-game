@@ -40,9 +40,6 @@ class GameView @JvmOverloads constructor(
 
     var score: Score? = null
     var gameConfig: GameConfig = GameConfig.default
-        set(value) {
-            field = value
-        }
 
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
     private val gestureListener: GemViewGestureListener = GemViewGestureListener(

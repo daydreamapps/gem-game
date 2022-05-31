@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,6 +27,7 @@ fun GameView(
     })
 }
 
+
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
     private val immutableGameConfig: GameConfig = GameConfig.default
@@ -42,8 +44,13 @@ class GameView @JvmOverloads constructor(
             field = value
         }
 
-    private var gemGrid: GameGrid? = null
-    private var gestureListener: GemViewGestureListener? = null
+    private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+    private val gestureListener: GemViewGestureListener = GemViewGestureListener(
+        immutableGameConfig.width,
+        immutableGameConfig.height,
+        this
+    )
+
 
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
@@ -79,15 +86,11 @@ class GameView @JvmOverloads constructor(
                 recycle()
             }
         }
-        gemGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
-        gestureListener = GemViewGestureListener(
-            immutableGameConfig.width,
-            immutableGameConfig.height,
-            this
-        )
 
         val gestureDetector = GestureDetector(context, gestureListener)
-        setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
+        val listener: (v: View, event: MotionEvent) -> Boolean =
+            { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
+        setOnTouchListener(listener)
     }
 
     override fun onDetachedFromWindow() {
@@ -121,7 +124,7 @@ class GameView @JvmOverloads constructor(
 
     override fun initialise() {
         // Remove matching groups from grid (clean start state)
-        gemGrid?.reset()
+        gemGrid.reset()
 
         verticalOffsets = buildIntGrid(0)
         horizontalOffsets = buildIntGrid(0)
@@ -156,7 +159,7 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-                val dropHeights: Array<Array<Int>> = gemGrid?.removeGems(removals) ?: emptyArray()
+                val dropHeights: Array<Array<Int>> = gemGrid.removeGems(removals)
                 drop(dropHeights, gemRemovalArray)
             }
 
@@ -262,7 +265,7 @@ class GameView @JvmOverloads constructor(
 
         val endCoordinates = coordinates.offset(direction)
 
-        gemGrid?.swapGems(coordinates, endCoordinates)
+        gemGrid.swapGems(coordinates, endCoordinates)
 
         swap(coordinates to endCoordinates)
     }
@@ -275,7 +278,7 @@ class GameView @JvmOverloads constructor(
         squareWidthPixels = width / immutableGameConfig.width
 
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
-        gestureListener?.squareWidthPixels = squareWidthPixels
+        gestureListener.squareWidthPixels = squareWidthPixels
 
         if (!isInitialised) initialise()
     }
@@ -291,7 +294,7 @@ class GameView @JvmOverloads constructor(
     private fun renderGems(
         canvas: Canvas,
     ) {
-        gemGrid?.forEachIndexed { xIndex, yIndex, gemType ->
+        gemGrid.forEachIndexed { xIndex, yIndex, gemType ->
             gemType.draw(canvas = canvas, xIndex = xIndex, yIndex = yIndex)
         }
 
@@ -364,7 +367,7 @@ class GameView @JvmOverloads constructor(
 
     private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {
 
-        gemGrid?.getAllMatches()?.apply {
+        gemGrid.getAllMatches().apply {
             if (isNotEmpty()) {
                 val coordinates = flatten()
 
@@ -376,7 +379,7 @@ class GameView @JvmOverloads constructor(
 
                 remove(coordinates, gemRemovalArray)
             }
-            gemGrid?.print()
+            gemGrid.print()
         }
     }
 }

@@ -40,8 +40,12 @@ class GameView @JvmOverloads constructor(
     var gameConfig: GameConfig = GameConfig.default
         set(value) {
             field = value
-            gemGrid = GameGrid(value.width, value.height)
-            gestureListener = GemViewGestureListener(value.width, value.height, this)
+            gemGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+            gestureListener = GemViewGestureListener(
+                immutableGameConfig.width,
+                immutableGameConfig.height,
+                this
+            )
 
             val gestureDetector = GestureDetector(context, gestureListener)
             setOnTouchListener { _, motionEvent -> gestureDetector.onTouchEvent(motionEvent) }
@@ -98,7 +102,7 @@ class GameView @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        val ratio = gameConfig.width / gameConfig.height.toFloat()
+        val ratio = immutableGameConfig.width / immutableGameConfig.height.toFloat()
 
         var width = measuredWidth
         var height = measuredHeight
@@ -268,9 +272,9 @@ class GameView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        widthRange = 0 until gameConfig.width
-        heightRange = 0 until gameConfig.height
-        squareWidthPixels = width / gameConfig.width
+        widthRange = 0 until immutableGameConfig.width
+        heightRange = 0 until immutableGameConfig.height
+        squareWidthPixels = width / immutableGameConfig.width
 
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener?.squareWidthPixels = squareWidthPixels
@@ -312,7 +316,8 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun renderSelector(canvas: Canvas, xIndex: Int, yIndex: Int) {
-        val selectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_selector, null) ?: return
+        val selectorDrawable =
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_selector, null) ?: return
 
         updateRectBounds(
             xIndex = xIndex,
@@ -352,14 +357,14 @@ class GameView @JvmOverloads constructor(
     // helper functions
 
     private fun buildIntGrid(init: Int): Array<Array<Int>> {
-        return Array(gameConfig.width ) { Array(gameConfig.height) { init } }
+        return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }
     }
 
     private fun buildIntGrid(init: (Int, Int) -> Int = { _, _ -> 0 }): Array<Array<Int>> {
-        return Array(gameConfig.width) { x -> Array(gameConfig.height) { y -> init(x, y) } }
+        return Array(immutableGameConfig.width) { x -> Array(immutableGameConfig.height) { y -> init(x, y) } }
     }
 
-    private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(gameConfig.width)) {
+    private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {
 
         gemGrid?.getAllMatches()?.apply {
             if (isNotEmpty()) {

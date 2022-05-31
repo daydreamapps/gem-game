@@ -60,9 +60,6 @@ class GameView @JvmOverloads constructor(
 
     private var gridPaddingPercent: Float = 0.1F
 
-    private var widthRange: IntRange = 0..0
-    private var heightRange: IntRange = 0..0
-
     private var squareWidthPixels: Int = 0
 
     private var gemRadius: Int = 0
@@ -273,10 +270,7 @@ class GameView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        widthRange = 0 until immutableGameConfig.width
-        heightRange = 0 until immutableGameConfig.height
         squareWidthPixels = width / immutableGameConfig.width
-
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
 

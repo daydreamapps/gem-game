@@ -28,7 +28,7 @@ fun GameView(
 
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
-    val immutableGameConfig: GameConfig = GameConfig.default
+    private val immutableGameConfig: GameConfig = GameConfig.default
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()

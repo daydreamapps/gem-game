@@ -19,8 +19,8 @@ import kotlin.math.max
 fun GameView(
     score: Score? = null,
 ) {
-    AndroidView(factory = {
-        GameView(it).also {
+    AndroidView(factory = { context ->
+        GameView(context).also {
             it.score = score
         }
     })

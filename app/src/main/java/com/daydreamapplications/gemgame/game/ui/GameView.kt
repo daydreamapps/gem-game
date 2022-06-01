@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -30,15 +31,23 @@ fun GameView(
 
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
-    private val immutableGameConfig: GameConfig = GameConfig.default
+    private val immutableGameConfig: GameConfig = GameConfig.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
     private var verticalOffsets: Array<Array<Int>> = emptyArray()
+    private var verticalOffsets2: Array<Array<MutableSet<Offset>>> = emptyArray()
+
+    data class Offset(val key: Any, val value: Int) {
+        override fun equals(other: Any?): Boolean = (other as? Offset)?.key == key
+        override fun hashCode(): Int = key.hashCode()
+    }
+
     private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
+
     // this game config is only used for the timing and not its width and height
     // TODO: replace with timing specific component
     var gameConfig: GameConfig = GameConfig.default
@@ -123,6 +132,7 @@ class GameView @JvmOverloads constructor(
         gemGrid.reset()
 
         verticalOffsets = buildIntGrid(0)
+        verticalOffsets2 = Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { HashSet<Offset>() } }
         horizontalOffsets = buildIntGrid(0)
         radii = buildIntGrid(gemRadius)
 
@@ -178,6 +188,15 @@ class GameView @JvmOverloads constructor(
 
         ValueAnimator.ofInt(0, maxDrop).apply {
 
+            addOnStartListener {
+                verticalOffsets2.forEach { x, y, value ->
+                    val offset = Offset(key = this, value = drops[x, y] * squareWidthPixels)
+                    value.replace(offset)
+                }
+
+                radii.setAllBy { _, _ -> gemRadius }
+            }
+
             duration = dropDuration
 
             addUpdateListener { valueAnimator ->
@@ -186,11 +205,16 @@ class GameView @JvmOverloads constructor(
                 verticalOffsets.setAllBy { x, y ->
                     max(0, startingOffsets[x, y] - progress)
                 }
+                verticalOffsets2.forEach { x, y, value ->
+                    val offset = Offset(key = this, value = max(0, startingOffsets[x, y] - progress))
+                    value.replace(offset)
+                }
                 invalidate()
             }
 
             addOnEndListener {
                 hideMatchedGemsIfPresent(gemRemovalArray)
+                verticalOffsets2.forEach { _, _, value -> value.remove(Offset(this, 0)) }
             }
 
             start()
@@ -204,7 +228,7 @@ class GameView @JvmOverloads constructor(
 
         val axis = Coordinates.axis(swap)
 
-        fun applyOffset(offset: Int) {
+        fun applyOffset(scope: Any, offset: Int) {
             when (axis) {
                 Axis.HORIZONTAL -> {
                     horizontalOffsets[coordinates[0]] = offset
@@ -213,6 +237,8 @@ class GameView @JvmOverloads constructor(
                 Axis.VERTICAL -> {
                     verticalOffsets[coordinates[0]] = offset
                     verticalOffsets[coordinates[1]] = -offset
+                    verticalOffsets2.get(coordinates[0]).replace(Offset(scope, offset))
+                    verticalOffsets2.get(coordinates[1]).replace(Offset(scope, -offset))
                 }
                 else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
             }
@@ -223,11 +249,15 @@ class GameView @JvmOverloads constructor(
             duration = gameConfig.swapDurationMs
 
             addUpdateListener {
-                applyOffset(it.animatedValue as Int)
+                applyOffset(this, it.animatedValue as Int)
                 invalidate()
             }
 
-            addOnEndListener { hideMatchedGemsIfPresent() }
+            addOnEndListener {
+                hideMatchedGemsIfPresent()
+                verticalOffsets2.get(coordinates[0]).remove(Offset(this, 0))
+                verticalOffsets2.get(coordinates[1]).remove(Offset(this, 0))
+            }
 
             start()
         }
@@ -281,6 +311,7 @@ class GameView @JvmOverloads constructor(
 
         super.onDraw(canvas)
 
+        Log.i("verticalHeights", verticalOffsets2.get(1, 1).toString())
         renderGems(canvas = canvas)
     }
 
@@ -329,15 +360,16 @@ class GameView @JvmOverloads constructor(
         radius: Int = gemRadius,
     ) {
         val verticalOffset = verticalOffsets[xIndex, yIndex]
+        val verticalOffset2 = verticalOffsets2[xIndex, yIndex].sumOf { it.value }
         val horizontalOffset = horizontalOffsets[xIndex, yIndex]
 
         val x = ((xIndex + 0.5) * squareWidthPixels).toInt()
         val y = ((yIndex + 0.5) * squareWidthPixels).toInt()
 
         left = x + horizontalOffset - radius
-        top = y + verticalOffset - radius
+        top = y + verticalOffset2 - radius
         right = x + horizontalOffset + radius
-        bottom = y + verticalOffset + radius
+        bottom = y + verticalOffset2 + radius
     }
 
     private fun updateRectBounds(
@@ -375,4 +407,9 @@ class GameView @JvmOverloads constructor(
             gemGrid.print()
         }
     }
+}
+
+fun <T> MutableSet<T>.replace(value: T) {
+    remove(value)
+    add(value)
 }

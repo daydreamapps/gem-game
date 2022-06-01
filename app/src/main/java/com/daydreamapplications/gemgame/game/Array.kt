@@ -10,6 +10,14 @@ fun <T> Array<Array<T>>.setAllBy(init: (Int, Int) -> T) {
     }
 }
 
+fun <T> Array<Array<T>>.forEach(action: (x:Int, y: Int, value: T) -> Unit) {
+    forEachIndexed { xIndex, column ->
+        column.forEachIndexed { yIndex, _ ->
+            action(xIndex, yIndex, get(xIndex, yIndex))
+        }
+    }
+}
+
 operator fun <T> Array<Array<T>>.get(xIndex: Int, yIndex: Int) = this[xIndex][yIndex]
 
 operator fun <T> Array<Array<T>>.set(xIndex: Int, yIndex: Int, value: T) {

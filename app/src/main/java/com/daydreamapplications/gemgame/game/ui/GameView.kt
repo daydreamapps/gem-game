@@ -38,6 +38,14 @@ class GameView @JvmOverloads constructor(
     private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
+    /*
+     * Required to prevent a visual glitch where multiple animators modify verticalOffsets at the same time (visual drops)
+     * This boolean prevents this by keeping track of when the view is animating & preventing interactions during this time
+     *
+     * Note: This is not idea, and a better solution would be to determine a better way to handle multiple drop
+     */
+    private var isAnimating = false
+
     var score: Score? = null
     // this game config is only used for the timing and not its width and height
     // TODO: replace with timing specific component
@@ -160,6 +168,7 @@ class GameView @JvmOverloads constructor(
             }
 
             start()
+            isAnimating = true
         }
     }
 
@@ -193,6 +202,7 @@ class GameView @JvmOverloads constructor(
                 hideMatchedGemsIfPresent(gemRemovalArray)
             }
 
+            isAnimating = true
             start()
         }
     }
@@ -227,8 +237,11 @@ class GameView @JvmOverloads constructor(
                 invalidate()
             }
 
-            addOnEndListener { hideMatchedGemsIfPresent() }
+            addOnEndListener {
+                hideMatchedGemsIfPresent()
+            }
 
+            isAnimating = true
             start()
         }
     }
@@ -255,6 +268,7 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
+        if (isAnimating) return
         if (direction == Direction.NONE) return
 
         selectedCoordinates = null
@@ -263,6 +277,8 @@ class GameView @JvmOverloads constructor(
 
         gemGrid.swapGems(coordinates, endCoordinates)
 
+        // Remove selection if present
+        deselect()
         swap(coordinates to endCoordinates)
     }
 
@@ -360,8 +376,12 @@ class GameView @JvmOverloads constructor(
 
     private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {
 
-        gemGrid.getAllMatches().apply {
+        val allMatches = gemGrid.getAllMatches()
+        isAnimating = allMatches.isNotEmpty()
+
+        allMatches.apply {
             if (isNotEmpty()) {
+
                 val coordinates = flatten()
 
                 coordinates.groupBy { it.x }.forEach { (xIndex, coordinates) ->

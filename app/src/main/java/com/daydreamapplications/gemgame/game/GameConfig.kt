@@ -1,10 +1,13 @@
 package com.daydreamapplications.gemgame.game
 
-interface GameConfig {
+interface GameTimings {
+    val swapDurationMs: Long
+}
+
+interface GameConfig : GameTimings {
 
     val width: Int
     val height: Int
-    val swapDurationMs: Long
 
     companion object {
 

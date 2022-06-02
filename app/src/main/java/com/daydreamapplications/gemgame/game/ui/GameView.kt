@@ -199,28 +199,10 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    override fun onAction(action: GameAction) {
-        when(action) {
-            is GameAction.Select -> {
-                onSelectedAction(action.coordinates)
-            }
-            is GameAction.Swap -> {
-                onSwapAction(action.coordinates, action.direction)
-            }
-        }
-    }
-
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
-        performSwap(swap)
-    }
-
-    private fun performSwap(swap: Pair<Coordinates, Coordinates>) {
         selectedGem = null
-
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
-
         val axis = Coordinates.axis(swap)
-
         fun applyOffset(offset: Int) {
             when (axis) {
                 Axis.HORIZONTAL -> {
@@ -234,7 +216,6 @@ class GameView @JvmOverloads constructor(
                 else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
             }
         }
-
         ValueAnimator.ofInt(squareWidthPixels, 0).apply {
 
             duration = gameConfig.swapDurationMs
@@ -250,11 +231,26 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private var selectedCoordinates: Coordinates? = null
-
     override fun onSelectedAction(coordinates: Coordinates) {
-        performSelection(coordinates)
+        onAction(GameAction.Select(coordinates))
     }
+
+    override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
+        onAction(GameAction.Swap(coordinates, direction))
+    }
+
+    override fun onAction(action: GameAction) {
+        when (action) {
+            is GameAction.Select -> {
+                performSelection(action.coordinates)
+            }
+            is GameAction.Swap -> {
+                performSwap(action.coordinates, action.direction)
+            }
+        }
+    }
+
+    private var selectedCoordinates: Coordinates? = null
 
     private fun performSelection(coordinates: Coordinates) {
         selectedCoordinates?.let { selected ->
@@ -275,7 +271,8 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
+    private fun performSwap(coordinates: Coordinates, direction: Direction) {
+        // TODO: prevent swap of actively dropping gems
         if (direction == Direction.NONE) return
 
         selectedCoordinates = null

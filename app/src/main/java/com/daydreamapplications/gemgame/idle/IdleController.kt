@@ -2,18 +2,15 @@ package com.daydreamapplications.gemgame.idle
 
 import android.animation.ValueAnimator
 import androidx.compose.runtime.mutableStateOf
-import com.daydreamapplications.gemgame.game.Coordinates
-import com.daydreamapplications.gemgame.game.Direction
-import com.daydreamapplications.gemgame.game.OnGameActionListener
-import com.daydreamapplications.gemgame.game.addOnRepeatListener
+import com.daydreamapplications.gemgame.game.*
 import kotlin.random.Random
 
 class IdleController(
-    var width: Int = 8,
-    var height: Int = 5,
+    val gameConfig: GameConfig,
 ) {
 
-    // TODO: swap duration
+    private val width: Int get() = gameConfig.width
+    private val height: Int get() = gameConfig.height
 
     val swapDelayProgress = mutableStateOf(0f)
 

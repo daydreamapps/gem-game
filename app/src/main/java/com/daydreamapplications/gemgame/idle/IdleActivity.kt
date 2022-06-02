@@ -29,8 +29,6 @@ class IdleActivity : AppCompatActivity() {
         }
     }
 
-    private val idleController: IdleController = IdleController()
-
     @Inject
     lateinit var idleGameConfig: IdleGameConfig
 
@@ -39,6 +37,8 @@ class IdleActivity : AppCompatActivity() {
 
     @Inject
     lateinit var upgradesRepository: UpgradesRepository
+
+    private val idleController: IdleController by lazy { IdleController(idleGameConfig) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

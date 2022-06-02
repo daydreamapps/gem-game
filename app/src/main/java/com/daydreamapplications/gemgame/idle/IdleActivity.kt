@@ -1,5 +1,7 @@
 package com.daydreamapplications.gemgame.idle
 
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.INFINITE
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,13 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
+import com.daydreamapplications.gemgame.game.addOnEndListener
 import com.daydreamapplications.gemgame.idle.score.ScoreRepository
 import com.daydreamapplications.gemgame.idle.upgrades.UpgradesRepository
 import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,13 +46,18 @@ class IdleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launchWhenResumed {
-            while (true) {
-                delay(2000)
-                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                    idleController.move()
-                }
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            repeatMode = INFINITE
+            // TODO: handle changes to this value
+            duration = 2000
+            addUpdateListener {
+                idleController.swapDelayProgress.value = it.animatedFraction
             }
+            addOnEndListener {
+                idleController.move()
+                start()
+            }
+            start()
         }
 
         setContent {

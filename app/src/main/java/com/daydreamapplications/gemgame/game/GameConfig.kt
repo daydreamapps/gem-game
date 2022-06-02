@@ -12,7 +12,7 @@ interface GameTimings {
     }
 }
 
-interface GameConfig : GameTimings {
+interface GameConfig {
 
     val width: Int
     val height: Int
@@ -23,7 +23,6 @@ interface GameConfig : GameTimings {
             get() = object : GameConfig {
                 override val width: Int = 8
                 override val height: Int = 6
-                override val swapDurationMs: Long = 500L
             }
     }
 }

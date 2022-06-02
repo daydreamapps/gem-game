@@ -17,13 +17,13 @@ fun IdleGameContent(
     modifier: Modifier = Modifier,
     score: Score,
     idleController: IdleController,
-    idleGameConfig: IdleGameConfig,
 ) {
     Surface(modifier = modifier) {
         Column {
 
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(8.dp),
             ) {
                 Text(text = "Score: ${score.current.value}")
@@ -34,7 +34,6 @@ fun IdleGameContent(
             ) {
                 IdleGameView(
                     idleController = idleController,
-                    idleGameConfig = idleGameConfig,
                     score = score,
                 )
             }

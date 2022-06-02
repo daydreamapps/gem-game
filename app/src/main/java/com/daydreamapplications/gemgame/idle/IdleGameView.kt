@@ -10,7 +10,6 @@ import com.daydreamapplications.gemgame.game.ui.GameView
 fun IdleGameView(
     modifier: Modifier = Modifier,
     idleController: IdleController,
-    idleGameConfig: IdleGameConfig,
     score: Score? = null,
 ) {
     AndroidView(
@@ -18,7 +17,7 @@ fun IdleGameView(
         factory = { context ->
             GameView(
                 context = context,
-                immutableGameConfig = idleGameConfig,
+                immutableGameConfig = idleController.gameConfig,
             ).also {
                 it.score = score
                 it.idleController = idleController

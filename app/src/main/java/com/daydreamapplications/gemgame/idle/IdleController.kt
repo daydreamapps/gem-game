@@ -2,11 +2,17 @@ package com.daydreamapplications.gemgame.idle
 
 import android.animation.ValueAnimator
 import androidx.compose.runtime.mutableStateOf
-import com.daydreamapplications.gemgame.game.*
+import com.daydreamapplications.gemgame.game.Coordinates
+import com.daydreamapplications.gemgame.game.Direction
+import com.daydreamapplications.gemgame.game.OnGameActionListener
+import com.daydreamapplications.gemgame.game.addOnRepeatListener
+import com.daydreamapplications.gemgame.idle.upgrades.Upgrade
+import javax.inject.Inject
 import kotlin.random.Random
 
-class IdleController(
-    val gameConfig: GameConfig,
+class IdleController @Inject constructor(
+    val gameConfig: IdleGameConfig,
+    private val gameTimings: IdleGameTimings,
 ) {
 
     private val width: Int get() = gameConfig.width
@@ -42,5 +48,9 @@ class IdleController(
 
             it.onSwapAction(coordinate, Direction.random())
         }
+    }
+
+    fun applyUpgrade(upgrade: Upgrade) {
+        gameTimings.applyUpgrade(upgrade)
     }
 }

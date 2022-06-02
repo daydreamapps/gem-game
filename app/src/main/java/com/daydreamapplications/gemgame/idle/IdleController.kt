@@ -1,5 +1,6 @@
 package com.daydreamapplications.gemgame.idle
 
+import androidx.compose.runtime.mutableStateOf
 import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.Direction
 import com.daydreamapplications.gemgame.game.OnGameActionListener
@@ -11,6 +12,8 @@ class IdleController(
 ) {
 
     // TODO: swap duration
+
+    val swapDelayProgress = mutableStateOf(0f)
 
     var onGameActionListener: OnGameActionListener? = null
 

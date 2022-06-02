@@ -10,6 +10,12 @@ fun ValueAnimator.addOnEndListener(onEnd: () -> Unit) {
     })
 }
 
+fun ValueAnimator.addOnRepeatListener(onRepeat: () -> Unit) {
+    addListener(object : AnimatorListener {
+        override fun onAnimationRepeat(animation: Animator?) = onRepeat()
+    })
+}
+
 private interface AnimatorListener : Animator.AnimatorListener {
 
     override fun onAnimationRepeat(animation: Animator?) = Unit

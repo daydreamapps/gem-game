@@ -195,7 +195,8 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-                hideMatchedGemsIfPresent(gemRemovalArray)
+//                hideMatchedGemsIfPresent(gemRemovalArray)
+                handleQueuedActions()
             }
 
             start()

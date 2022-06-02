@@ -228,7 +228,7 @@ class GameView @JvmOverloads constructor(
                 invalidate()
             }
 
-            addOnEndListener { hideMatchedGemsIfPresent() }
+            addOnEndListener { handleQueuedActions() }
 
             start()
         }
@@ -258,11 +258,13 @@ class GameView @JvmOverloads constructor(
     }
 
     fun handleQueuedActions() {
-        queue.poll()
-            ?.let {
-                onAction(it)
-                handleQueuedActions()
-            }
+        val action = queue.poll()
+        if (action != null) {
+            onAction(action)
+            handleQueuedActions()
+        } else {
+            hideMatchedGemsIfPresent()
+        }
     }
 
     private var selectedCoordinates: Coordinates? = null

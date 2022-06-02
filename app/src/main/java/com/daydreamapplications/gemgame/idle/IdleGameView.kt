@@ -16,9 +16,11 @@ fun IdleGameView(
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            GameView(context).also {
+            GameView(
+                context = context,
+                immutableGameConfig = idleGameConfig,
+            ).also {
                 it.score = score
-                it.gameConfig = idleGameConfig
                 it.idleController = idleController
             }
         }

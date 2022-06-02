@@ -44,10 +44,6 @@ class GameView @JvmOverloads constructor(
 
     var score: Score? = null
 
-    // this game config is only used for the timing and not its width and height
-    // TODO: replace with timing specific component
-    var gameConfig: GameConfig = GameConfig.default
-
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
     private val gestureListener: GemViewGestureListener = GemViewGestureListener(
         immutableGameConfig.width,
@@ -227,7 +223,7 @@ class GameView @JvmOverloads constructor(
         }
         ValueAnimator.ofInt(squareWidthPixels, 0).apply {
 
-            duration = gameConfig.swapDurationMs
+            duration = gameTimings.swapDurationMs
 
             addUpdateListener {
                 applyOffset(it.animatedValue as Int)

@@ -29,16 +29,14 @@ class IdleActivity : AppCompatActivity() {
         }
     }
 
-    private val idleController: IdleController = IdleController()
-
-    @Inject
-    lateinit var idleGameConfig: IdleGameConfig
-
     @Inject
     lateinit var scoreRepository: ScoreRepository
 
     @Inject
     lateinit var upgradesRepository: UpgradesRepository
+
+    @Inject
+    lateinit var idleController: IdleController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +62,7 @@ class IdleActivity : AppCompatActivity() {
                             .padding(8.dp),
                         color = MaterialTheme.colors.background
                     ) {
-                        IdleContent(idleController, idleGameConfig, scoreRepository, upgradesRepository)
+                        IdleContent(idleController, scoreRepository, upgradesRepository)
                     }
                 }
             }

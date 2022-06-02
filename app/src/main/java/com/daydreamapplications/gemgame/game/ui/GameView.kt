@@ -34,6 +34,7 @@ class GameView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     private val immutableGameConfig: GameConfig = GameConfig.default,
+    private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
@@ -42,10 +43,6 @@ class GameView @JvmOverloads constructor(
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
-
-    // this game config is only used for the timing and not its width and height
-    // TODO: replace with timing specific component
-    var gameConfig: GameConfig = GameConfig.default
 
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
     private val gestureListener: GemViewGestureListener = GemViewGestureListener(
@@ -80,7 +77,6 @@ class GameView @JvmOverloads constructor(
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
-
             try {
                 dropDuration = getInteger(R.styleable.GameView_dropDuration, 100).toLong()
                 hideDuration = getInteger(R.styleable.GameView_hideDuration, 500).toLong()
@@ -127,7 +123,6 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun initialise() {
-        // Remove matching groups from grid (clean start state)
         gemGrid.reset()
 
         verticalOffsets = buildIntGrid(0)
@@ -200,7 +195,6 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-//                hideMatchedGemsIfPresent(gemRemovalArray)
                 isDropping = false
                 handleQueuedActions()
             }
@@ -229,7 +223,7 @@ class GameView @JvmOverloads constructor(
         }
         ValueAnimator.ofInt(squareWidthPixels, 0).apply {
 
-            duration = gameConfig.swapDurationMs
+            duration = gameTimings.swapDurationMs
 
             addUpdateListener {
                 applyOffset(it.animatedValue as Int)
@@ -243,7 +237,6 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onSelectedAction(coordinates: Coordinates) {
-//        onAction(GameAction.Select(coordinates))
         queue.add(GameAction.Select(coordinates))
         handleQueuedActions()
     }
@@ -251,7 +244,6 @@ class GameView @JvmOverloads constructor(
     override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
         queue.add(GameAction.Swap(coordinates, direction))
         handleQueuedActions()
-//        onAction(GameAction.Swap(coordinates, direction))
     }
 
     override fun onAction(action: GameAction) {
@@ -393,8 +385,6 @@ class GameView @JvmOverloads constructor(
     ) {
         rect.moveTo(xIndex, yIndex, radius)
     }
-
-    // helper functions
 
     private fun buildIntGrid(init: Int): Array<Array<Int>> {
         return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }

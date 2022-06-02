@@ -6,14 +6,17 @@ import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.Direction
 import com.daydreamapplications.gemgame.game.OnGameActionListener
 import com.daydreamapplications.gemgame.game.addOnRepeatListener
+import com.daydreamapplications.gemgame.idle.upgrades.Upgrade
+import javax.inject.Inject
 import kotlin.random.Random
 
-class IdleController(
-    var width: Int = 8,
-    var height: Int = 5,
+class IdleController @Inject constructor(
+    val gameConfig: IdleGameConfig,
+    private val gameTimings: IdleGameTimings,
 ) {
 
-    // TODO: swap duration
+    private val width: Int get() = gameConfig.width
+    private val height: Int get() = gameConfig.height
 
     val swapDelayProgress = mutableStateOf(0f)
 
@@ -45,5 +48,9 @@ class IdleController(
 
             it.onSwapAction(coordinate, Direction.random())
         }
+    }
+
+    fun applyUpgrade(upgrade: Upgrade) {
+        gameTimings.applyUpgrade(upgrade)
     }
 }

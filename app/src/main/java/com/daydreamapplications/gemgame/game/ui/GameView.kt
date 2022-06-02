@@ -56,6 +56,9 @@ class GameView @JvmOverloads constructor(
 
     private val queue = ArrayBlockingQueue<GameAction>(3, true)
 
+    private var isRemoving = false
+    private var isDropping = false
+
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
 
@@ -160,10 +163,12 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
+                isRemoving = false
                 val dropHeights: Array<Array<Int>> = gemGrid.removeGems(removals)
                 drop(dropHeights, gemRemovalArray)
             }
 
+            isRemoving = true
             start()
         }
     }
@@ -196,9 +201,11 @@ class GameView @JvmOverloads constructor(
 
             addOnEndListener {
 //                hideMatchedGemsIfPresent(gemRemovalArray)
+                isDropping = false
                 handleQueuedActions()
             }
 
+            isDropping = true
             start()
         }
     }
@@ -259,6 +266,9 @@ class GameView @JvmOverloads constructor(
     }
 
     fun handleQueuedActions() {
+        if (isDropping) return
+        if (isRemoving) return
+
         val action = queue.poll()
         if (action != null) {
             onAction(action)

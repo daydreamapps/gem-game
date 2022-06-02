@@ -14,6 +14,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.idle.IdleController
+import java.util.concurrent.ArrayBlockingQueue
 import kotlin.math.max
 
 @Composable
@@ -29,8 +30,10 @@ fun GameView(
 
 
 class GameView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
-    private val immutableGameConfig: GameConfig = GameConfig.default
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    private val immutableGameConfig: GameConfig = GameConfig.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
@@ -39,6 +42,7 @@ class GameView @JvmOverloads constructor(
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
+
     // this game config is only used for the timing and not its width and height
     // TODO: replace with timing specific component
     var gameConfig: GameConfig = GameConfig.default
@@ -50,6 +54,10 @@ class GameView @JvmOverloads constructor(
         this
     )
 
+    private val queue = ArrayBlockingQueue<GameAction>(3, true)
+
+    private var isRemoving = false
+    private var isDropping = false
 
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
@@ -155,10 +163,12 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
+                isRemoving = false
                 val dropHeights: Array<Array<Int>> = gemGrid.removeGems(removals)
                 drop(dropHeights, gemRemovalArray)
             }
 
+            isRemoving = true
             start()
         }
     }
@@ -190,20 +200,20 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-                hideMatchedGemsIfPresent(gemRemovalArray)
+//                hideMatchedGemsIfPresent(gemRemovalArray)
+                isDropping = false
+                handleQueuedActions()
             }
 
+            isDropping = true
             start()
         }
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
         selectedGem = null
-
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
-
         val axis = Coordinates.axis(swap)
-
         fun applyOffset(offset: Int) {
             when (axis) {
                 Axis.HORIZONTAL -> {
@@ -217,7 +227,6 @@ class GameView @JvmOverloads constructor(
                 else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
             }
         }
-
         ValueAnimator.ofInt(squareWidthPixels, 0).apply {
 
             duration = gameConfig.swapDurationMs
@@ -227,15 +236,51 @@ class GameView @JvmOverloads constructor(
                 invalidate()
             }
 
-            addOnEndListener { hideMatchedGemsIfPresent() }
+            addOnEndListener { handleQueuedActions() }
 
             start()
         }
     }
 
+    override fun onSelectedAction(coordinates: Coordinates) {
+//        onAction(GameAction.Select(coordinates))
+        queue.add(GameAction.Select(coordinates))
+        handleQueuedActions()
+    }
+
+    override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
+        queue.add(GameAction.Swap(coordinates, direction))
+        handleQueuedActions()
+//        onAction(GameAction.Swap(coordinates, direction))
+    }
+
+    override fun onAction(action: GameAction) {
+        when (action) {
+            is GameAction.Select -> {
+                performSelection(action.coordinates)
+            }
+            is GameAction.Swap -> {
+                performSwap(action.coordinates, action.direction)
+            }
+        }
+    }
+
+    fun handleQueuedActions() {
+        if (isDropping) return
+        if (isRemoving) return
+
+        val action = queue.poll()
+        if (action != null) {
+            onAction(action)
+            handleQueuedActions()
+        } else {
+            hideMatchedGemsIfPresent()
+        }
+    }
+
     private var selectedCoordinates: Coordinates? = null
 
-    override fun onSelectedAction(coordinates: Coordinates) {
+    private fun performSelection(coordinates: Coordinates) {
         selectedCoordinates?.let { selected ->
             val inferredDirection = selected.getAdjacentDirection(coordinates)
 
@@ -254,7 +299,8 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
+    private fun performSwap(coordinates: Coordinates, direction: Direction) {
+        // TODO: prevent swap of actively dropping gems
         if (direction == Direction.NONE) return
 
         selectedCoordinates = null

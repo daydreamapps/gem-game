@@ -1,51 +1,43 @@
 package com.daydreamapplications.gemgame.idle.score
 
-import android.content.SharedPreferences
 import com.daydreamapplications.gemgame.assertEquals
-import com.daydreamapplications.gemgame.utils.NullSharedPreferences
 import io.mockk.*
 import junit.framework.TestCase
 
 class ScoreRepositoryTest : TestCase() {
 
     private fun subject(
-        sharedPreferences: SharedPreferences = NullSharedPreferences(),
+        scorePersistence: ScorePersistence = mockk(),
     ): ScoreRepository {
         return ScoreRepository(
-            sharedPreferences = sharedPreferences,
+            scorePersistence = scorePersistence,
         )
     }
 
     fun `test read score`() {
-        val sharedPreferences: SharedPreferences = object : NullSharedPreferences() {
-            override fun getLong(key: String?, defValue: Long): Long = 20000L
-        }
+        val scorePersistence: ScorePersistence = mockk()
+        every { scorePersistence.score } returns 20000L
 
         subject(
-            sharedPreferences = sharedPreferences,
+            scorePersistence = scorePersistence,
         ).current.value assertEquals 20000L
     }
 
     fun `test write score`() {
-        val editor: SharedPreferences.Editor = mockk()
-        every { editor.putLong("score", 5000L) } returns editor
-        every { editor.apply() } just Runs
-
-        val sharedPreferences: SharedPreferences = mockk()
-        every { sharedPreferences.getLong("score", 0L) } returns 0L
-        every { sharedPreferences.edit() } returns editor
+        val scorePersistence: ScorePersistence = mockk()
+        every { scorePersistence.score } returns 0L
+        every { scorePersistence.score = 5000L } just Runs
 
         subject(
-            sharedPreferences = sharedPreferences,
+            scorePersistence = scorePersistence,
         ).apply {
             change(by = 5000L)
 
             current.value assertEquals 5000L
         }
 
-        verifyOrder {
-            editor.putLong("score", 5000L)
-            editor.apply()
+        verify {
+            scorePersistence.score = 5000L
         }
     }
 }

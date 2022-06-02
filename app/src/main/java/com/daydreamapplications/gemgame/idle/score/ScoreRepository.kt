@@ -1,32 +1,26 @@
 package com.daydreamapplications.gemgame.idle.score
 
-import android.content.SharedPreferences
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.content.edit
 import com.daydreamapplications.gemgame.game.Score
 import javax.inject.Inject
-import javax.inject.Named
 
 class ScoreRepository @Inject constructor(
-    // TODO: Wrapper class for Scores
-    @Named("Score")
-    private val sharedPreferences: SharedPreferences,
+    private val scorePersistence: ScorePersistence,
 ) : Score {
 
     override val current: MutableState<Long> = mutableStateOf(storedScore)
 
     override fun change(by: Number) {
-        val newValue = storedScore + by.toLong()
-        storedScore = newValue
-        current.value = newValue
+        (storedScore + by.toLong()).also {
+            storedScore = it
+            current.value = it
+        }
     }
 
     private var storedScore: Long
-        get() = sharedPreferences.getLong("score", 0L)
+        get() = scorePersistence.score
         set(value) {
-            sharedPreferences.edit {
-                putLong("score", value)
-            }
+            scorePersistence.score = value
         }
 }

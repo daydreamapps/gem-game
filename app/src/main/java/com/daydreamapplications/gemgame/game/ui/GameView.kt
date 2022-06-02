@@ -29,8 +29,10 @@ fun GameView(
 
 
 class GameView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
-    private val immutableGameConfig: GameConfig = GameConfig.default
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    private val immutableGameConfig: GameConfig = GameConfig.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
@@ -39,6 +41,7 @@ class GameView @JvmOverloads constructor(
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
+
     // this game config is only used for the timing and not its width and height
     // TODO: replace with timing specific component
     var gameConfig: GameConfig = GameConfig.default
@@ -49,7 +52,6 @@ class GameView @JvmOverloads constructor(
         immutableGameConfig.height,
         this
     )
-
 
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
@@ -194,6 +196,17 @@ class GameView @JvmOverloads constructor(
             }
 
             start()
+        }
+    }
+
+    override fun onAction(action: GameAction) {
+        when(action) {
+            is GameAction.Select -> {
+                onSelectedAction(action.coordinates)
+            }
+            is GameAction.Swap -> {
+                onSwapAction(action.coordinates, action.direction)
+            }
         }
     }
 

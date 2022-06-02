@@ -6,12 +6,21 @@ import com.daydreamapplications.gemgame.game.Score
 import javax.inject.Inject
 
 class ScoreRepository @Inject constructor(
+    private val scorePersistence: ScorePersistence,
 ) : Score {
 
-    // TODO: persistence
-    override val current: MutableState<Long> = mutableStateOf(0)
+    override val current: MutableState<Long> = mutableStateOf(storedScore)
 
     override fun change(by: Number) {
-        current.value += by.toLong()
+        (storedScore + by.toLong()).also {
+            storedScore = it
+            current.value = it
+        }
     }
+
+    private var storedScore: Long
+        get() = scorePersistence.score
+        set(value) {
+            scorePersistence.score = value
+        }
 }

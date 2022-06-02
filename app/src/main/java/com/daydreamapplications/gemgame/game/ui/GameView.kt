@@ -127,7 +127,6 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun initialise() {
-        // Remove matching groups from grid (clean start state)
         gemGrid.reset()
 
         verticalOffsets = buildIntGrid(0)
@@ -200,7 +199,6 @@ class GameView @JvmOverloads constructor(
             }
 
             addOnEndListener {
-//                hideMatchedGemsIfPresent(gemRemovalArray)
                 isDropping = false
                 handleQueuedActions()
             }
@@ -243,7 +241,6 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onSelectedAction(coordinates: Coordinates) {
-//        onAction(GameAction.Select(coordinates))
         queue.add(GameAction.Select(coordinates))
         handleQueuedActions()
     }
@@ -251,7 +248,6 @@ class GameView @JvmOverloads constructor(
     override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
         queue.add(GameAction.Swap(coordinates, direction))
         handleQueuedActions()
-//        onAction(GameAction.Swap(coordinates, direction))
     }
 
     override fun onAction(action: GameAction) {
@@ -393,8 +389,6 @@ class GameView @JvmOverloads constructor(
     ) {
         rect.moveTo(xIndex, yIndex, radius)
     }
-
-    // helper functions
 
     private fun buildIntGrid(init: Int): Array<Array<Int>> {
         return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }

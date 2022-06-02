@@ -34,6 +34,7 @@ class GameView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     private val immutableGameConfig: GameConfig = GameConfig.default,
+    private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
     private var radii: Array<Array<Int>> = emptyArray()
@@ -80,7 +81,6 @@ class GameView @JvmOverloads constructor(
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
-
             try {
                 dropDuration = getInteger(R.styleable.GameView_dropDuration, 100).toLong()
                 hideDuration = getInteger(R.styleable.GameView_hideDuration, 500).toLong()

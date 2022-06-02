@@ -12,13 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import com.daydreamapplications.gemgame.idle.score.ScoreRepository
 import com.daydreamapplications.gemgame.idle.upgrades.UpgradesRepository
 import com.daydreamapplications.gemgame.ui.theme.GemGameTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,15 +43,6 @@ class IdleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launchWhenResumed {
-            while (true) {
-                delay(2000)
-                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                    idleController.move()
-                }
-            }
-        }
-
         setContent {
             GemGameTheme {
                 Scaffold(
@@ -81,5 +69,15 @@ class IdleActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        idleController.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        idleController.pause()
     }
 }

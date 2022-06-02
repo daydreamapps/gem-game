@@ -2,7 +2,6 @@ package com.daydreamapplications.gemgame.idle
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -21,23 +20,12 @@ fun IdleContent(
         modifier = Modifier.fillMaxWidth()
     ) {
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(text = "Score: ${score.current.value}")
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            IdleGameView(
-                idleController = idleController,
-                idleGameConfig = idleGameConfig,
-                score = score,
-            )
-        }
+        IdleGameContent(
+            modifier = Modifier.weight(1f),
+            score = score,
+            idleController = idleController,
+            idleGameConfig = idleGameConfig
+        )
 
         UpgradeView(
             modifier = Modifier.fillMaxWidth(),

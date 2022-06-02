@@ -211,6 +211,10 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
+        performSwap(swap)
+    }
+
+    private fun performSwap(swap: Pair<Coordinates, Coordinates>) {
         selectedGem = null
 
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
@@ -249,6 +253,10 @@ class GameView @JvmOverloads constructor(
     private var selectedCoordinates: Coordinates? = null
 
     override fun onSelectedAction(coordinates: Coordinates) {
+        performSelection(coordinates)
+    }
+
+    private fun performSelection(coordinates: Coordinates) {
         selectedCoordinates?.let { selected ->
             val inferredDirection = selected.getAdjacentDirection(coordinates)
 

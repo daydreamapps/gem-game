@@ -14,6 +14,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.idle.IdleController
+import java.util.concurrent.ArrayBlockingQueue
 import kotlin.math.max
 
 @Composable
@@ -52,6 +53,8 @@ class GameView @JvmOverloads constructor(
         immutableGameConfig.height,
         this
     )
+
+    private val queue = ArrayBlockingQueue<GameAction>(3, true)
 
     private var isInitialised = false
     private var selectedGem: Coordinates? = null
@@ -232,11 +235,15 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onSelectedAction(coordinates: Coordinates) {
-        onAction(GameAction.Select(coordinates))
+//        onAction(GameAction.Select(coordinates))
+        queue.add(GameAction.Select(coordinates))
+        handleQueuedActions()
     }
 
     override fun onSwapAction(coordinates: Coordinates, direction: Direction) {
-        onAction(GameAction.Swap(coordinates, direction))
+        queue.add(GameAction.Swap(coordinates, direction))
+        handleQueuedActions()
+//        onAction(GameAction.Swap(coordinates, direction))
     }
 
     override fun onAction(action: GameAction) {
@@ -248,6 +255,14 @@ class GameView @JvmOverloads constructor(
                 performSwap(action.coordinates, action.direction)
             }
         }
+    }
+
+    fun handleQueuedActions() {
+        queue.poll()
+            ?.let {
+                onAction(it)
+                handleQueuedActions()
+            }
     }
 
     private var selectedCoordinates: Coordinates? = null

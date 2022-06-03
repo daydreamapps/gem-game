@@ -73,7 +73,7 @@ class GameView @JvmOverloads constructor(
             value?.onGameActionListener = this@GameView
         }
 
-    var gameController: GameController = GameController(gemGrid, gemRadius)
+    var gameController: GameController = GameController(gemGrid, gemRadius, gameTimings)
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
@@ -305,7 +305,7 @@ class GameView @JvmOverloads constructor(
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
 
-        gameController = GameController(gemGrid, gemRadius)
+        gameController = GameController(gemGrid, gemRadius, gameTimings)
 
         if (!isInitialised) initialise()
     }

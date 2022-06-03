@@ -2,6 +2,7 @@ package com.daydreamapplications.gemgame.game.ui
 
 import com.daydreamapplications.gemgame.assertEquals
 import com.daydreamapplications.gemgame.game.GameGrid
+import com.daydreamapplications.gemgame.game.GameTimings
 import com.daydreamapplications.gemgame.game.height
 import com.daydreamapplications.gemgame.game.width
 import junit.framework.TestCase
@@ -11,10 +12,12 @@ class GameControllerTest : TestCase() {
     private fun subject(
         gameGrid: GameGrid = GameGrid(width = 3, height = 2),
         gemRadius: Int = 10,
+        gameTimings: GameTimings = GameTimings.default,
     ): GameController {
         return GameController(
             gameGrid = gameGrid,
             gemRadius = gemRadius,
+            gameTimings = gameTimings,
         )
     }
 

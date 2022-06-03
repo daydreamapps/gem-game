@@ -1,10 +1,12 @@
 package com.daydreamapplications.gemgame.game.ui
 
 import com.daydreamapplications.gemgame.game.GameGrid
+import com.daydreamapplications.gemgame.game.GameTimings
 
 class GameController(
     val gameGrid: GameGrid,
     val gemRadius: Int,
+    private val gameTimings: GameTimings,
 ) {
 
     val radii: Array<Array<Int>> = buildIntGrid(gemRadius)

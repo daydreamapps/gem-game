@@ -9,7 +9,7 @@ class IntGridKtTest : TestCase() {
         intGrid(width = 3, height = 2, init = 1).apply {
             size assertEquals 3
             get(0).size assertEquals 2
-            get(0).get(0) assertEquals 1
+            get(0)[0] assertEquals 1
         }
     }
 

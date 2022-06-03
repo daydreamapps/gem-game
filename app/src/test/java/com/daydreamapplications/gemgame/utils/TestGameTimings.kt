@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.daydreamapplications.gemgame.utils
 
 import com.daydreamapplications.gemgame.game.GameTimings

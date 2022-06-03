@@ -175,7 +175,7 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    fun handleQueuedActions() {
+    private fun handleQueuedActions() {
         if (gameController.isDropping) return
         if (gameController.isRemoving) return
 

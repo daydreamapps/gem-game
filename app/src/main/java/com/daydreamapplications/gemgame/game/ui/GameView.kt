@@ -56,9 +56,6 @@ class GameView @JvmOverloads constructor(
 
     private var isInitialised = false
 
-    private var dropDuration: Long = 100L
-    private var hideDuration: Long = 500L
-
     private var gridPaddingPercent: Float = 0.1F
 
     companion object {
@@ -80,9 +77,6 @@ class GameView @JvmOverloads constructor(
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
             try {
-                dropDuration = getInteger(R.styleable.GameView_dropDuration, 100).toLong()
-                hideDuration = getInteger(R.styleable.GameView_hideDuration, 500).toLong()
-
                 gridPaddingPercent = getFloat(R.styleable.GameView_gridPaddingPercent, 0.1F)
             } finally {
                 recycle()
@@ -144,7 +138,7 @@ class GameView @JvmOverloads constructor(
     override fun remove(removals: List<Coordinates>, gemRemovalArray: IntArray) {
 
         ValueAnimator.ofInt(gemRadius, 0).apply {
-            duration = hideDuration
+            duration = gameTimings.hideDuration
 
             addUpdateListener { valueAnimator ->
                 removals.forEach {
@@ -175,7 +169,7 @@ class GameView @JvmOverloads constructor(
 
         val dropSquares = drops.toIterable().maxOrNull() ?: 0
         val maxDrop = dropSquares * squareWidthPixels
-        val dropDuration = dropSquares * dropDuration
+        val dropDuration = dropSquares * gameTimings.dropDuration
 
         ValueAnimator.ofInt(0, maxDrop).apply {
 

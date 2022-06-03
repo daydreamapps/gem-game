@@ -1,12 +1,14 @@
 package com.daydreamapplications.gemgame.game.ui
 
-import android.animation.ValueAnimator
+import androidx.compose.animation.core.AnimationConstants
 import com.daydreamapplications.gemgame.game.*
+import com.daydreamapplications.gemgame.utils.Animator
 
 class GameController(
     val gameGrid: GameGrid,
     val gemRadius: Int,
     private val gameTimings: GameTimings,
+    private val animator: Animator.Companion = Animator.Companion,
 ) {
 
     var selectedGem: Coordinates? = null
@@ -28,21 +30,17 @@ class GameController(
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
         val axis = Coordinates.axis(swap) ?: return
 
-        // TODO: create unit-testable wrapper for ValueAnimator
-        ValueAnimator.ofInt(GameView.squareWidthPixels, 0).apply {
-
-            duration = gameTimings.swapDurationMs
-
-            addUpdateListener {
-
-                val offset = it.animatedValue as Int
-                offset(coordinates[0], offset, axis)
-                offset(coordinates[1], offset, axis)
+        animator.between(
+            start = GameView.squareWidthPixels,
+            end = 0,
+            durationMs = gameTimings.swapDurationMs,
+            onUpdate = { value ->
+                offset(coordinates[0], value, axis)
+                offset(coordinates[1], -value, axis)
                 onUpdate()
-            }
-
-            addOnEndListener(onEnd)
-        }.start()
+            },
+            onEnd = onEnd,
+        )
     }
 
     fun offset(
@@ -50,6 +48,7 @@ class GameController(
         offset: Int,
         axis: Axis,
     ) {
+        AnimationConstants
         when (axis) {
             Axis.HORIZONTAL -> {
                 horizontalOffsets[coordinates] = offset

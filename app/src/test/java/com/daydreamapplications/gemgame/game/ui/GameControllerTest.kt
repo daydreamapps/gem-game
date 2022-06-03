@@ -27,6 +27,7 @@ class GameControllerTest : TestCase() {
         subject(
             gameGrid = GameGrid(width = 3, height = 2),
         ).apply {
+            isDropping assertEquals false
             isRemoving assertEquals false
 
             radii.apply {
@@ -250,5 +251,47 @@ class GameControllerTest : TestCase() {
         }
 
         verify { onUpdate() }
+    }
+
+    fun `test drop updates isDropping state`() {
+        val dropGrid = intGrid(width = 3, height = 2, init = 0).apply {
+            set(xIndex = 0, yIndex = 0, value = 2)
+        }
+
+        val animator: Animator.Companion = mockk()
+        every {
+            animator.between(
+                range = 0..(2 * GameView.squareWidthPixels), // squareWidthPixels is static & zero
+                durationMs = 2 * GameTimings.default.dropDuration, // squareWidthPixels is static & zero
+                onUpdate = any(),
+                onEnd = any(),
+            )
+        } returns mockk()
+
+        subject(
+            gameGrid = GameGrid(width = 3, height = 2),
+            gemRadius = 10,
+            gameTimings = GameTimings.default,
+            animator = animator,
+        ).apply {
+            isDropping assertEquals false
+
+            drop(
+                drops = dropGrid,
+                onUpdate = {},
+                onEnd = {},
+            )
+
+            isDropping assertEquals true
+        }
+
+        verify {
+            animator.between(
+                range = 0..(2 * GameView.squareWidthPixels),
+                durationMs = 2 * GameTimings.default.dropDuration,
+                onUpdate = any(),
+                onEnd = any(),
+            )
+        }
     }
 }

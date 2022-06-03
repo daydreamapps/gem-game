@@ -55,14 +55,15 @@ class GameView @JvmOverloads constructor(
     private var isDropping = false
 
     private var isInitialised = false
-//    private var selectedGem: Coordinates? = null
 
     private var dropDuration: Long = 100L
     private var hideDuration: Long = 500L
 
     private var gridPaddingPercent: Float = 0.1F
 
-    private var squareWidthPixels: Int = 0
+    companion object {
+        var squareWidthPixels: Int = 0
+    }
 
     private var gemRadius: Int = 0
 

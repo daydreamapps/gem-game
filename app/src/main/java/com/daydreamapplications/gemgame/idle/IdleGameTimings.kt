@@ -8,8 +8,9 @@ import javax.inject.Inject
 class IdleGameTimings @Inject constructor(
 ) : GameTimings {
 
-    override var swapDurationMs: Long = 500L
     override var dropDuration: Long = 100L
+    override var hideDuration: Long = 500L
+    override var swapDurationMs: Long = 500L
 
     fun applyUpgrade(upgrade: Upgrade) {
         when (upgrade.type) {

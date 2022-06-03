@@ -26,20 +26,7 @@ class GameController(
     ) {
         selectedGem = null
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
-        val axis = Coordinates.axis(swap)
-        fun applyOffset(offset: Int) {
-            when (axis) {
-                Axis.HORIZONTAL -> {
-                    horizontalOffsets[coordinates[0]] = offset
-                    horizontalOffsets[coordinates[1]] = -offset
-                }
-                Axis.VERTICAL -> {
-                    verticalOffsets[coordinates[0]] = offset
-                    verticalOffsets[coordinates[1]] = -offset
-                }
-                else -> throw IllegalArgumentException("Coordinates must be adjacent to perform swap")
-            }
-        }
+        val axis = Coordinates.axis(swap) ?: return
 
         // TODO: create unit-testable wrapper for ValueAnimator
         ValueAnimator.ofInt(GameView.squareWidthPixels, 0).apply {
@@ -47,15 +34,29 @@ class GameController(
             duration = gameTimings.swapDurationMs
 
             addUpdateListener {
-                applyOffset(it.animatedValue as Int)
+
+                val offset = it.animatedValue as Int
+                offset(coordinates[0], offset, axis)
+                offset(coordinates[1], offset, axis)
                 onUpdate()
             }
 
-            addOnEndListener {
-                onEnd()
-            }
+            addOnEndListener(onEnd)
+        }.start()
+    }
 
-            start()
+    fun offset(
+        coordinates: Coordinates,
+        offset: Int,
+        axis: Axis,
+    ) {
+        when (axis) {
+            Axis.HORIZONTAL -> {
+                horizontalOffsets[coordinates] = offset
+            }
+            Axis.VERTICAL -> {
+                verticalOffsets[coordinates] = offset
+            }
         }
     }
 }

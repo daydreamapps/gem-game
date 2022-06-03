@@ -62,6 +62,7 @@ class GameView @JvmOverloads constructor(
     private var gridPaddingPercent: Float = 0.1F
 
     companion object {
+        // TODO: move to GameController
         var squareWidthPixels: Int = 0
     }
 

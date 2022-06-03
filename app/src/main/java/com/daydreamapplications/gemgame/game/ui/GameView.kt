@@ -51,7 +51,6 @@ class GameView @JvmOverloads constructor(
 
     private val queue = ArrayBlockingQueue<GameAction>(3, true)
 
-    private var isRemoving = false
     private var isDropping = false
 
     private var isInitialised = false
@@ -136,26 +135,14 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun remove(removals: List<Coordinates>, gemRemovalArray: IntArray) {
-
-        ValueAnimator.ofInt(gemRadius, 0).apply {
-            duration = gameTimings.hideDuration
-
-            addUpdateListener { valueAnimator ->
-                removals.forEach {
-                    gameController.radii[it] = valueAnimator.animatedValue as Int
-                }
-                invalidate()
-            }
-
-            addOnEndListener {
-                isRemoving = false
+        gameController.remove(
+            removals = removals,
+            onUpdate = ::invalidate,
+            onEnd = {
                 val dropHeights: Array<Array<Int>> = gemGrid.removeGems(removals)
                 drop(dropHeights, gemRemovalArray)
-            }
-
-            isRemoving = true
-            start()
-        }
+            },
+        )
     }
 
     override fun drop(drops: Array<Array<Int>>, gemRemovalArray: IntArray) {
@@ -225,7 +212,7 @@ class GameView @JvmOverloads constructor(
 
     fun handleQueuedActions() {
         if (isDropping) return
-        if (isRemoving) return
+        if (gameController.isRemoving) return
 
         val action = queue.poll()
         if (action != null) {

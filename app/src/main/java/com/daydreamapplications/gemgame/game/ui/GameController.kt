@@ -11,6 +11,10 @@ class GameController(
     private val animator: Animator.Companion = Animator.Companion,
 ) {
 
+    var isRemoving: Boolean = false
+        private set
+
+
     var selectedGem: Coordinates? = null
 
     val radii: Array<Array<Int>> = buildIntGrid(gemRadius)
@@ -31,7 +35,7 @@ class GameController(
         val axis = Coordinates.axis(swap) ?: return
 
         animator.between(
-            range =  GameView.squareWidthPixels .. 0,
+            range = GameView.squareWidthPixels..0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
                 offset(coordinates[0], value, axis)
@@ -42,7 +46,7 @@ class GameController(
         )
     }
 
-    fun offset(
+    private fun offset(
         coordinates: Coordinates,
         offset: Int,
         axis: Axis,
@@ -56,5 +60,28 @@ class GameController(
                 verticalOffsets[coordinates] = offset
             }
         }
+    }
+
+    fun remove(
+        removals: List<Coordinates>,
+        onUpdate: () -> Unit,
+        onEnd: () -> Unit,
+    ) {
+        isRemoving = true
+
+        animator.between(
+            range = gemRadius..0,
+            durationMs = gameTimings.hideDuration,
+            onUpdate = { value ->
+                removals.forEach {
+                    radii[it] = value
+                }
+                onUpdate()
+            },
+            onEnd = {
+                isRemoving = false
+                onEnd()
+            },
+        )
     }
 }

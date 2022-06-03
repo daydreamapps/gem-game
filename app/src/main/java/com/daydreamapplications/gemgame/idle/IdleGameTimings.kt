@@ -9,6 +9,7 @@ class IdleGameTimings @Inject constructor(
 ) : GameTimings {
 
     override var swapDurationMs: Long = 500L
+    override var dropDuration: Long = 100L
 
     fun applyUpgrade(upgrade: Upgrade) {
         when (upgrade.type) {

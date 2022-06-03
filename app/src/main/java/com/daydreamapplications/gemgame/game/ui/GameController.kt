@@ -1,8 +1,7 @@
 package com.daydreamapplications.gemgame.game.ui
 
-import com.daydreamapplications.gemgame.game.Coordinates
-import com.daydreamapplications.gemgame.game.GameGrid
-import com.daydreamapplications.gemgame.game.GameTimings
+import android.animation.ValueAnimator
+import com.daydreamapplications.gemgame.game.*
 
 class GameController(
     val gameGrid: GameGrid,
@@ -18,5 +17,45 @@ class GameController(
 
     private fun buildIntGrid(init: Int): Array<Array<Int>> {
         return Array(gameGrid.width) { Array(gameGrid.height) { init } }
+    }
+
+    fun swap(
+        swap: Pair<Coordinates, Coordinates>,
+        onUpdate: () -> Unit,
+        onEnd: () -> Unit,
+    ) {
+        selectedGem = null
+        val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
+        val axis = Coordinates.axis(swap)
+        fun applyOffset(offset: Int) {
+            when (axis) {
+                Axis.HORIZONTAL -> {
+                    horizontalOffsets[coordinates[0]] = offset
+                    horizontalOffsets[coordinates[1]] = -offset
+                }
+                Axis.VERTICAL -> {
+                    verticalOffsets[coordinates[0]] = offset
+                    verticalOffsets[coordinates[1]] = -offset
+                }
+                else -> throw IllegalArgumentException("Coordinates must be adjacent to perform swap")
+            }
+        }
+
+        // TODO: create unit-testable wrapper for ValueAnimator
+        ValueAnimator.ofInt(GameView.squareWidthPixels, 0).apply {
+
+            duration = gameTimings.swapDurationMs
+
+            addUpdateListener {
+                applyOffset(it.animatedValue as Int)
+                onUpdate()
+            }
+
+            addOnEndListener {
+                onEnd()
+            }
+
+            start()
+        }
     }
 }

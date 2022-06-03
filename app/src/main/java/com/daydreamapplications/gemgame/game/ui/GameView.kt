@@ -201,35 +201,11 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
-        gameController.selectedGem = null
-        val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
-        val axis = Coordinates.axis(swap)
-        fun applyOffset(offset: Int) {
-            when (axis) {
-                Axis.HORIZONTAL -> {
-                    gameController.horizontalOffsets[coordinates[0]] = offset
-                    gameController.horizontalOffsets[coordinates[1]] = -offset
-                }
-                Axis.VERTICAL -> {
-                    gameController.verticalOffsets[coordinates[0]] = offset
-                    gameController.verticalOffsets[coordinates[1]] = -offset
-                }
-                else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
-            }
-        }
-        ValueAnimator.ofInt(squareWidthPixels, 0).apply {
-
-            duration = gameTimings.swapDurationMs
-
-            addUpdateListener {
-                applyOffset(it.animatedValue as Int)
-                invalidate()
-            }
-
-            addOnEndListener { handleQueuedActions() }
-
-            start()
-        }
+        gameController.swap(
+            swap = swap,
+            onUpdate = { invalidate() },
+            onEnd = { handleQueuedActions() },
+        )
     }
 
     override fun onSelectedAction(coordinates: Coordinates) {

@@ -55,8 +55,7 @@ class GameControllerTest : TestCase() {
 
         every {
             animator.between(
-                start = GameView.squareWidthPixels,
-                end = 0,
+                range = GameView.squareWidthPixels..0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -75,8 +74,7 @@ class GameControllerTest : TestCase() {
 
         verify {
             animator.between(
-                start = GameView.squareWidthPixels,
-                end = 0,
+                range = GameView.squareWidthPixels..0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -90,8 +88,7 @@ class GameControllerTest : TestCase() {
 
         every {
             animator.between(
-                start = any(),
-                end = any(),
+                range = any(),
                 durationMs = any(),
                 onUpdate = any(),
                 onEnd = capture(endSlot),
@@ -122,8 +119,7 @@ class GameControllerTest : TestCase() {
 
         every {
             animator.between(
-                start = any(),
-                end = any(),
+                range = any(),
                 durationMs = any(),
                 onUpdate = capture(updateSlot),
                 onEnd = any(),

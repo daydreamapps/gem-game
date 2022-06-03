@@ -31,8 +31,7 @@ class GameController(
         val axis = Coordinates.axis(swap) ?: return
 
         animator.between(
-            start = GameView.squareWidthPixels,
-            end = 0,
+            range =  GameView.squareWidthPixels .. 0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
                 offset(coordinates[0], value, axis)

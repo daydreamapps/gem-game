@@ -5,19 +5,18 @@ import com.daydreamapplications.gemgame.game.addOnEndListener
 
 interface Animator {
 
-    fun start()
-    fun end()
+//    fun start()
+//    fun end()
 
     companion object {
 
         fun between(
-            start: Int,
-            end: Int,
+            range: IntRange,
             durationMs: Long,
             onUpdate: (value: Int) -> Unit,
             onEnd: () -> Unit,
         ) {
-            ValueAnimator.ofInt(start, end).apply {
+            ValueAnimator.ofInt(range.first, range.last).apply {
 
                 duration = durationMs
 

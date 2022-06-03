@@ -63,7 +63,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
 
         every {
-            animator.between(
+            animator.betweenInts(
                 range = 10..0,
                 durationMs = 400L,
                 onUpdate = any(),
@@ -83,7 +83,7 @@ class GameControllerTest : TestCase() {
         )
 
         verify {
-            animator.between(
+            animator.betweenInts(
                 range = 10..0,
                 durationMs = 400L,
                 onUpdate = any(),
@@ -97,7 +97,7 @@ class GameControllerTest : TestCase() {
         val endSlot = slot<() -> Unit>()
 
         every {
-            animator.between(
+            animator.betweenInts(
                 range = any(),
                 durationMs = any(),
                 onUpdate = any(),
@@ -128,7 +128,7 @@ class GameControllerTest : TestCase() {
         val updateSlot = slot<(Int) -> Unit>()
 
         every {
-            animator.between(
+            animator.betweenInts(
                 range = any(),
                 durationMs = any(),
                 onUpdate = capture(updateSlot),
@@ -159,7 +159,7 @@ class GameControllerTest : TestCase() {
 
         val animator: Animator.Companion = mockk()
         every {
-            animator.between(
+            animator.betweenInts(
                 range = 10..0,
                 durationMs = 100L,
                 onUpdate = any(),
@@ -181,7 +181,7 @@ class GameControllerTest : TestCase() {
         }
 
         verify {
-            animator.between(
+            animator.betweenInts(
                 range = 10..0,
                 durationMs = 100L,
                 onUpdate = any(),
@@ -195,7 +195,7 @@ class GameControllerTest : TestCase() {
         val endSlot: CapturingSlot<() -> Unit> = slot()
 
         every {
-            animator.between(
+            animator.betweenInts(
                 range = any(),
                 durationMs = any(),
                 onUpdate = any(),
@@ -231,7 +231,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
         val updateSlot: CapturingSlot<(Int) -> Unit> = slot()
         every {
-            animator.between(
+            animator.betweenInts(
                 range = any(),
                 durationMs = any(),
                 onUpdate = capture(updateSlot),
@@ -269,7 +269,7 @@ class GameControllerTest : TestCase() {
 
         val animator: Animator.Companion = mockk()
         every {
-            animator.between(
+            animator.betweenInts(
                 range = 0..(2 * 10), // squareWidthPixels is static & zero
                 durationMs = 2 * GameTimings.default.dropDuration, // squareWidthPixels is static & zero
                 onUpdate = any(),
@@ -296,7 +296,7 @@ class GameControllerTest : TestCase() {
         }
 
         verify {
-            animator.between(
+            animator.betweenInts(
                 range = 0..(2 * 10),
                 durationMs = 2 * GameTimings.default.dropDuration,
                 onUpdate = any(),
@@ -313,7 +313,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
         val updateSlot: CapturingSlot<(Int) -> Unit> = slot()
         every {
-            animator.between(
+            animator.betweenInts(
                 range = 0..(2 * 10), // squareWidthPixels is static & zero
                 durationMs = 2 * GameTimings.default.dropDuration, // squareWidthPixels is static & zero
                 onUpdate = capture(updateSlot),
@@ -354,7 +354,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
         val endSlot: CapturingSlot<() -> Unit> = slot()
         every {
-            animator.between(
+            animator.betweenInts(
                 range = any(),
                 durationMs = any(),
                 onUpdate = any(),

@@ -39,7 +39,7 @@ class GameController(
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
         val axis = Coordinates.axis(swap) ?: return
 
-        animator.between(
+        animator.betweenInts(
             range = squareWidthPixels..0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
@@ -74,7 +74,7 @@ class GameController(
     ) {
         isRemoving = true
 
-        animator.between(
+        animator.betweenInts(
             range = gemRadius..0,
             durationMs = gameTimings.hideDuration,
             onUpdate = { value ->
@@ -108,7 +108,7 @@ class GameController(
 
         isDropping = true
 
-        animator.between(
+        animator.betweenInts(
             range = 0..maxDrop,
             durationMs = dropSquares * gameTimings.dropDuration,
             onUpdate = { value ->

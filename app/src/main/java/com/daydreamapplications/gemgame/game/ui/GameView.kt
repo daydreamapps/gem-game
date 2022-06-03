@@ -45,6 +45,21 @@ class GameView @JvmOverloads constructor(
     var score: Score? = null
 
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+
+    class GameController(
+        val gameGrid: GameGrid,
+        val gemRadius: Int,
+    ) {
+
+        val radii: Array<Array<Int>> = buildIntGrid(gemRadius)
+        val verticalOffsets: Array<Array<Int>> = buildIntGrid(0)
+        val horizontalOffsets: Array<Array<Int>> = buildIntGrid(0)
+
+        private fun buildIntGrid(init: Int): Array<Array<Int>> {
+            return Array(gameGrid.width) { Array(gameGrid.height) { init } }
+        }
+    }
+
     private val gestureListener: GemViewGestureListener = GemViewGestureListener(
         immutableGameConfig.width,
         immutableGameConfig.height,
@@ -74,6 +89,8 @@ class GameView @JvmOverloads constructor(
             field = value
             value?.onGameActionListener = this@GameView
         }
+
+    var gameController: GameController = GameController(gemGrid, gemRadius)
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
@@ -144,8 +161,6 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun remove(removals: List<Coordinates>, gemRemovalArray: IntArray) {
-
-        radii = buildIntGrid(gemRadius)
 
         ValueAnimator.ofInt(gemRadius, 0).apply {
             duration = hideDuration
@@ -310,6 +325,8 @@ class GameView @JvmOverloads constructor(
         squareWidthPixels = width / immutableGameConfig.width
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
+
+        gameController = GameController(gemGrid, gemRadius)
 
         if (!isInitialised) initialise()
     }

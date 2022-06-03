@@ -3,7 +3,5 @@
     <declare-styleable name="GameView">
 
         <attr name="gridPaddingPercent" format="float" />
-
-        <attr name="hideDuration" format="integer" />
     </declare-styleable>
 </resources>

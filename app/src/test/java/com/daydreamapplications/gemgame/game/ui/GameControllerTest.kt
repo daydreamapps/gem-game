@@ -222,7 +222,9 @@ class GameControllerTest : TestCase() {
             isRemoving assertEquals false
         }
 
-        verify { onEnd() }
+        verify {
+            onEnd()
+        }
     }
 
     fun `test update sets radius`() {
@@ -255,7 +257,9 @@ class GameControllerTest : TestCase() {
             radii.get(0, 0) assertEquals 5
         }
 
-        verify { onUpdate() }
+        verify {
+            onUpdate()
+        }
     }
 
     fun `test drop updates isDropping state`() {
@@ -298,6 +302,86 @@ class GameControllerTest : TestCase() {
                 onUpdate = any(),
                 onEnd = any(),
             )
+        }
+    }
+
+    fun `test drop onUpdate updates verticalOffsets`() {
+        val dropGrid = intGrid(width = 3, height = 2, init = 0).apply {
+            set(xIndex = 0, yIndex = 0, value = 2)
+        }
+
+        val animator: Animator.Companion = mockk()
+        val updateSlot: CapturingSlot<(Int) -> Unit> = slot()
+        every {
+            animator.between(
+                range = 0..(2 * 10), // squareWidthPixels is static & zero
+                durationMs = 2 * GameTimings.default.dropDuration, // squareWidthPixels is static & zero
+                onUpdate = capture(updateSlot),
+                onEnd = any(),
+            )
+        } returns mockk()
+
+        val onUpdate: () -> Unit = mockk(relaxed = true)
+
+        subject(
+            gameGrid = GameGrid(width = 3, height = 2),
+            gemRadius = 10,
+            gameTimings = GameTimings.default,
+            animator = animator,
+            squareWidthPixels = 10,
+        ).apply {
+            verticalOffsets[0, 0] assertEquals 0
+
+            drop(
+                drops = dropGrid,
+                onUpdate = onUpdate,
+                onEnd = {},
+            )
+
+            verticalOffsets[0, 0] assertEquals 20
+
+            updateSlot.captured(5)
+
+            verticalOffsets[0, 0] assertEquals 15
+        }
+
+        verify {
+            onUpdate()
+        }
+    }
+
+    fun `test drop onEnd updates isDropping state`() {
+        val animator: Animator.Companion = mockk()
+        val endSlot: CapturingSlot<() -> Unit> = slot()
+        every {
+            animator.between(
+                range = any(),
+                durationMs = any(),
+                onUpdate = any(),
+                onEnd = capture(endSlot),
+            )
+        } returns mockk()
+
+        val onEnd: () -> Unit = mockk(relaxed = true)
+
+        subject(
+            animator = animator,
+        ).apply {
+            isDropping assertEquals false
+
+            drop(
+                drops = intGrid(width = 3, height = 2, init = 0),
+                onUpdate = {},
+                onEnd = onEnd,
+            )
+            isDropping assertEquals true
+
+            endSlot.captured()
+            isDropping assertEquals false
+        }
+
+        verify {
+            onEnd()
         }
     }
 }

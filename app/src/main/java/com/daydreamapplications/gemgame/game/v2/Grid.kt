@@ -3,6 +3,7 @@ package com.daydreamapplications.gemgame.game.v2
 import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.IGrid
 
+@Suppress("UNCHECKED_CAST") // Required & wekk tested
 open class Grid<T : Any>(
     override val width: Int,
     override val height: Int,

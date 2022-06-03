@@ -37,14 +37,12 @@ class GameView @JvmOverloads constructor(
     private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
-    private var radii: Array<Array<Int>> = emptyArray()
-    private var verticalOffsets: Array<Array<Int>> = emptyArray()
-    private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
 
     private val gemGrid: GameGrid = GameGrid(immutableGameConfig.width, immutableGameConfig.height)
+
     private val gestureListener: GemViewGestureListener = GemViewGestureListener(
         immutableGameConfig.width,
         immutableGameConfig.height,
@@ -57,14 +55,16 @@ class GameView @JvmOverloads constructor(
     private var isDropping = false
 
     private var isInitialised = false
-    private var selectedGem: Coordinates? = null
 
     private var dropDuration: Long = 100L
     private var hideDuration: Long = 500L
 
     private var gridPaddingPercent: Float = 0.1F
 
-    private var squareWidthPixels: Int = 0
+    companion object {
+        // TODO: move to GameController
+        var squareWidthPixels: Int = 0
+    }
 
     private var gemRadius: Int = 0
 
@@ -74,6 +74,8 @@ class GameView @JvmOverloads constructor(
             field = value
             value?.onGameActionListener = this@GameView
         }
+
+    private var gameController: GameController = GameController(gemGrid, gemRadius, gameTimings)
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
@@ -125,34 +127,28 @@ class GameView @JvmOverloads constructor(
     override fun initialise() {
         gemGrid.reset()
 
-        verticalOffsets = buildIntGrid(0)
-        horizontalOffsets = buildIntGrid(0)
-        radii = buildIntGrid(gemRadius)
-
         isInitialised = true
         invalidate()
     }
 
     override fun select(selection: Coordinates) {
-        selectedGem = selection
+        gameController.selectedGem = selection
         invalidate()
     }
 
     override fun deselect() {
-        selectedGem = null
+        gameController.selectedGem = null
         invalidate()
     }
 
     override fun remove(removals: List<Coordinates>, gemRemovalArray: IntArray) {
-
-        radii = buildIntGrid(gemRadius)
 
         ValueAnimator.ofInt(gemRadius, 0).apply {
             duration = hideDuration
 
             addUpdateListener { valueAnimator ->
                 removals.forEach {
-                    radii[it] = valueAnimator.animatedValue as Int
+                    gameController.radii[it] = valueAnimator.animatedValue as Int
                 }
                 invalidate()
             }
@@ -170,8 +166,8 @@ class GameView @JvmOverloads constructor(
 
     override fun drop(drops: Array<Array<Int>>, gemRemovalArray: IntArray) {
 
-        verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
-        radii.setAllBy { _, _ -> gemRadius }
+        gameController.verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
+        gameController.radii.setAllBy { _, _ -> gemRadius }
 
         val startingOffsets = buildIntGrid { x, y ->
             drops[x, y] * squareWidthPixels
@@ -188,7 +184,7 @@ class GameView @JvmOverloads constructor(
             addUpdateListener { valueAnimator ->
                 val progress = valueAnimator.animatedValue as Int
 
-                verticalOffsets.setAllBy { x, y ->
+                gameController.verticalOffsets.setAllBy { x, y ->
                     max(0, startingOffsets[x, y] - progress)
                 }
                 invalidate()
@@ -205,35 +201,11 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
-        selectedGem = null
-        val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
-        val axis = Coordinates.axis(swap)
-        fun applyOffset(offset: Int) {
-            when (axis) {
-                Axis.HORIZONTAL -> {
-                    horizontalOffsets[coordinates[0]] = offset
-                    horizontalOffsets[coordinates[1]] = -offset
-                }
-                Axis.VERTICAL -> {
-                    verticalOffsets[coordinates[0]] = offset
-                    verticalOffsets[coordinates[1]] = -offset
-                }
-                else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
-            }
-        }
-        ValueAnimator.ofInt(squareWidthPixels, 0).apply {
-
-            duration = gameTimings.swapDurationMs
-
-            addUpdateListener {
-                applyOffset(it.animatedValue as Int)
-                invalidate()
-            }
-
-            addOnEndListener { handleQueuedActions() }
-
-            start()
-        }
+        gameController.swap(
+            swap = swap,
+            onUpdate = { invalidate() },
+            onEnd = { handleQueuedActions() },
+        )
     }
 
     override fun onSelectedAction(coordinates: Coordinates) {
@@ -311,6 +283,8 @@ class GameView @JvmOverloads constructor(
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
 
+        gameController = GameController(gemGrid, gemRadius, gameTimings)
+
         if (!isInitialised) initialise()
     }
 
@@ -329,7 +303,7 @@ class GameView @JvmOverloads constructor(
             gemType.draw(canvas = canvas, xIndex = xIndex, yIndex = yIndex)
         }
 
-        selectedGem?.apply {
+        gameController.selectedGem?.apply {
             renderSelector(canvas, x, y)
         }
     }
@@ -340,7 +314,7 @@ class GameView @JvmOverloads constructor(
         updateRectBounds(
             xIndex = xIndex,
             yIndex = yIndex,
-            radius = radii[xIndex, yIndex]
+            radius = gameController.radii[xIndex, yIndex]
         )
 
         drawable.bounds = rect
@@ -366,8 +340,8 @@ class GameView @JvmOverloads constructor(
         yIndex: Int,
         radius: Int = gemRadius,
     ) {
-        val verticalOffset = verticalOffsets[xIndex, yIndex]
-        val horizontalOffset = horizontalOffsets[xIndex, yIndex]
+        val verticalOffset = gameController.verticalOffsets[xIndex, yIndex]
+        val horizontalOffset = gameController.horizontalOffsets[xIndex, yIndex]
 
         val x = ((xIndex + 0.5) * squareWidthPixels).toInt()
         val y = ((yIndex + 0.5) * squareWidthPixels).toInt()
@@ -384,10 +358,6 @@ class GameView @JvmOverloads constructor(
         radius: Int = gemRadius,
     ) {
         rect.moveTo(xIndex, yIndex, radius)
-    }
-
-    private fun buildIntGrid(init: Int): Array<Array<Int>> {
-        return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }
     }
 
     private fun buildIntGrid(init: (Int, Int) -> Int = { _, _ -> 0 }): Array<Array<Int>> {

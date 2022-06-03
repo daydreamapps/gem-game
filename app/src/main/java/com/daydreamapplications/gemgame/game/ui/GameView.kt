@@ -37,7 +37,6 @@ class GameView @JvmOverloads constructor(
     private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
-    private var verticalOffsets: Array<Array<Int>> = emptyArray()
     private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
@@ -141,7 +140,6 @@ class GameView @JvmOverloads constructor(
     override fun initialise() {
         gemGrid.reset()
 
-        verticalOffsets = buildIntGrid(0)
         horizontalOffsets = buildIntGrid(0)
 
         isInitialised = true
@@ -183,7 +181,7 @@ class GameView @JvmOverloads constructor(
 
     override fun drop(drops: Array<Array<Int>>, gemRemovalArray: IntArray) {
 
-        verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
+        gameController.verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
         gameController.radii.setAllBy { _, _ -> gemRadius }
 
         val startingOffsets = buildIntGrid { x, y ->
@@ -201,7 +199,7 @@ class GameView @JvmOverloads constructor(
             addUpdateListener { valueAnimator ->
                 val progress = valueAnimator.animatedValue as Int
 
-                verticalOffsets.setAllBy { x, y ->
+                gameController.verticalOffsets.setAllBy { x, y ->
                     max(0, startingOffsets[x, y] - progress)
                 }
                 invalidate()
@@ -228,8 +226,8 @@ class GameView @JvmOverloads constructor(
                     horizontalOffsets[coordinates[1]] = -offset
                 }
                 Axis.VERTICAL -> {
-                    verticalOffsets[coordinates[0]] = offset
-                    verticalOffsets[coordinates[1]] = -offset
+                    gameController.verticalOffsets[coordinates[0]] = offset
+                    gameController.verticalOffsets[coordinates[1]] = -offset
                 }
                 else -> throw IllegalArgumentException("Coordinates must be adjacent top perform swap")
             }
@@ -381,7 +379,7 @@ class GameView @JvmOverloads constructor(
         yIndex: Int,
         radius: Int = gemRadius,
     ) {
-        val verticalOffset = verticalOffsets[xIndex, yIndex]
+        val verticalOffset = gameController.verticalOffsets[xIndex, yIndex]
         val horizontalOffset = horizontalOffsets[xIndex, yIndex]
 
         val x = ((xIndex + 0.5) * squareWidthPixels).toInt()

@@ -37,7 +37,6 @@ class GameView @JvmOverloads constructor(
     private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
-    private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
 
     var score: Score? = null
@@ -140,8 +139,6 @@ class GameView @JvmOverloads constructor(
     override fun initialise() {
         gemGrid.reset()
 
-        horizontalOffsets = buildIntGrid(0)
-
         isInitialised = true
         invalidate()
     }
@@ -222,8 +219,8 @@ class GameView @JvmOverloads constructor(
         fun applyOffset(offset: Int) {
             when (axis) {
                 Axis.HORIZONTAL -> {
-                    horizontalOffsets[coordinates[0]] = offset
-                    horizontalOffsets[coordinates[1]] = -offset
+                    gameController.horizontalOffsets[coordinates[0]] = offset
+                    gameController.horizontalOffsets[coordinates[1]] = -offset
                 }
                 Axis.VERTICAL -> {
                     gameController.verticalOffsets[coordinates[0]] = offset
@@ -380,7 +377,7 @@ class GameView @JvmOverloads constructor(
         radius: Int = gemRadius,
     ) {
         val verticalOffset = gameController.verticalOffsets[xIndex, yIndex]
-        val horizontalOffset = horizontalOffsets[xIndex, yIndex]
+        val horizontalOffset = gameController.horizontalOffsets[xIndex, yIndex]
 
         val x = ((xIndex + 0.5) * squareWidthPixels).toInt()
         val y = ((yIndex + 0.5) * squareWidthPixels).toInt()
@@ -397,10 +394,6 @@ class GameView @JvmOverloads constructor(
         radius: Int = gemRadius,
     ) {
         rect.moveTo(xIndex, yIndex, radius)
-    }
-
-    private fun buildIntGrid(init: Int): Array<Array<Int>> {
-        return Array(immutableGameConfig.width) { Array(immutableGameConfig.height) { init } }
     }
 
     private fun buildIntGrid(init: (Int, Int) -> Int = { _, _ -> 0 }): Array<Array<Int>> {

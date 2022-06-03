@@ -37,7 +37,6 @@ class GameView @JvmOverloads constructor(
     private val gameTimings: GameTimings = GameTimings.default,
 ) : View(context, attrs, defStyleAttr), IGameView, OnGameActionListener {
 
-    private var radii: Array<Array<Int>> = emptyArray()
     private var verticalOffsets: Array<Array<Int>> = emptyArray()
     private var horizontalOffsets: Array<Array<Int>> = emptyArray()
     private val rect = Rect(0, 0, 0, 0)
@@ -144,7 +143,6 @@ class GameView @JvmOverloads constructor(
 
         verticalOffsets = buildIntGrid(0)
         horizontalOffsets = buildIntGrid(0)
-        radii = buildIntGrid(gemRadius)
 
         isInitialised = true
         invalidate()
@@ -167,7 +165,7 @@ class GameView @JvmOverloads constructor(
 
             addUpdateListener { valueAnimator ->
                 removals.forEach {
-                    radii[it] = valueAnimator.animatedValue as Int
+                    gameController.radii[it] = valueAnimator.animatedValue as Int
                 }
                 invalidate()
             }
@@ -186,7 +184,7 @@ class GameView @JvmOverloads constructor(
     override fun drop(drops: Array<Array<Int>>, gemRemovalArray: IntArray) {
 
         verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
-        radii.setAllBy { _, _ -> gemRadius }
+        gameController.radii.setAllBy { _, _ -> gemRadius }
 
         val startingOffsets = buildIntGrid { x, y ->
             drops[x, y] * squareWidthPixels
@@ -357,7 +355,7 @@ class GameView @JvmOverloads constructor(
         updateRectBounds(
             xIndex = xIndex,
             yIndex = yIndex,
-            radius = radii[xIndex, yIndex]
+            radius = gameController.radii[xIndex, yIndex]
         )
 
         drawable.bounds = rect

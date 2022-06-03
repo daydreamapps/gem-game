@@ -4,10 +4,7 @@ import com.daydreamapplications.gemgame.assertEquals
 import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.utils.Animator
 import com.daydreamapplications.gemgame.utils.TestGameTimings
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import junit.framework.TestCase
 
 class GameControllerTest : TestCase() {
@@ -185,5 +182,73 @@ class GameControllerTest : TestCase() {
                 onEnd = any(),
             )
         }
+    }
+
+    fun `test remove onEnd isRemoving state`() {
+        val animator: Animator.Companion = mockk()
+        val endSlot: CapturingSlot<() -> Unit> = slot()
+
+        every {
+            animator.between(
+                range = any(),
+                durationMs = any(),
+                onUpdate = any(),
+                onEnd = capture(endSlot),
+            )
+        } returns mockk()
+
+        val onEnd: () -> Unit = mockk(relaxed = true)
+
+        subject(
+            animator = animator,
+        ).apply {
+            isRemoving assertEquals false
+
+            remove(
+                removals = listOf(Coordinates(x = 0, y = 0)),
+                onUpdate = {},
+                onEnd = onEnd,
+            )
+            isRemoving assertEquals true
+
+            endSlot.captured()
+
+            isRemoving assertEquals false
+        }
+
+        verify { onEnd() }
+    }
+
+    fun `test update sets radius`() {
+        val animator: Animator.Companion = mockk()
+        val updateSlot: CapturingSlot<(Int) -> Unit> = slot()
+        every {
+            animator.between(
+                range = any(),
+                durationMs = any(),
+                onUpdate = capture(updateSlot),
+                onEnd = any(),
+            )
+        } returns mockk()
+
+        val onUpdate: () -> Unit = mockk(relaxed = true)
+
+        subject(
+            animator = animator,
+        ).apply {
+
+            radii.get(0, 0) assertEquals 10
+
+            remove(
+                removals = listOf(Coordinates(x = 0, y = 0)),
+                onUpdate = onUpdate,
+                onEnd = {},
+            )
+
+            updateSlot.captured(5)
+            radii.get(0, 0) assertEquals 5
+        }
+
+        verify { onUpdate() }
     }
 }

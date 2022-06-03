@@ -17,6 +17,8 @@ class GameController(
     var isRemoving: Boolean = false
         private set
 
+    // TODO: move to GameMeasurements
+    var squareWidthPixels: Int = 0
 
     var selectedGem: Coordinates? = null
 
@@ -38,7 +40,7 @@ class GameController(
         val axis = Coordinates.axis(swap) ?: return
 
         animator.between(
-            range = GameView.squareWidthPixels..0,
+            range = squareWidthPixels..0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
                 offset(coordinates[0], value, axis)
@@ -94,15 +96,15 @@ class GameController(
         onEnd: () -> Unit,
     ) {
 
-        verticalOffsets.setAllBy { x, y -> drops[x, y] * GameView.squareWidthPixels }
+        verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
         radii.setAllBy { _, _ -> gemRadius }
 
         val startingOffsets = intGrid(gameGrid.width, gameGrid.height) { x, y ->
-            drops[x, y] * GameView.squareWidthPixels
+            drops[x, y] * squareWidthPixels
         }
 
         val dropSquares = drops.toIterable().maxOrNull() ?: 0
-        val maxDrop = dropSquares * GameView.squareWidthPixels
+        val maxDrop = dropSquares * squareWidthPixels
 
         isDropping = true
 

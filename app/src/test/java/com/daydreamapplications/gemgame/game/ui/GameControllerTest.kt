@@ -14,13 +14,17 @@ class GameControllerTest : TestCase() {
         gemRadius: Int = 10,
         gameTimings: GameTimings = GameTimings.default,
         animator: Animator.Companion = Animator,
+        // TODO: move to GameMeasurements
+        squareWidthPixels: Int = 10,
     ): GameController {
         return GameController(
             gameGrid = gameGrid,
             gemRadius = gemRadius,
             gameTimings = gameTimings,
             animator = animator,
-        )
+        ).also {
+            it.squareWidthPixels = squareWidthPixels
+        }
     }
 
     fun `test initial state`() {
@@ -60,7 +64,7 @@ class GameControllerTest : TestCase() {
 
         every {
             animator.between(
-                range = GameView.squareWidthPixels..0,
+                range = 10..0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -71,6 +75,7 @@ class GameControllerTest : TestCase() {
         subject(
             gameTimings = TestGameTimings.gameTimings(swapDurationMs = 400L),
             animator = animator,
+            squareWidthPixels = 10,
         ).swap(
             swap = Coordinates(x = 0, y = 0) to Coordinates(1, 0),
             onUpdate = {},
@@ -79,7 +84,7 @@ class GameControllerTest : TestCase() {
 
         verify {
             animator.between(
-                range = GameView.squareWidthPixels..0,
+                range = 10..0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -261,7 +266,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
         every {
             animator.between(
-                range = 0..(2 * GameView.squareWidthPixels), // squareWidthPixels is static & zero
+                range = 0..(2 * 10), // squareWidthPixels is static & zero
                 durationMs = 2 * GameTimings.default.dropDuration, // squareWidthPixels is static & zero
                 onUpdate = any(),
                 onEnd = any(),
@@ -273,6 +278,7 @@ class GameControllerTest : TestCase() {
             gemRadius = 10,
             gameTimings = GameTimings.default,
             animator = animator,
+            squareWidthPixels = 10,
         ).apply {
             isDropping assertEquals false
 
@@ -287,7 +293,7 @@ class GameControllerTest : TestCase() {
 
         verify {
             animator.between(
-                range = 0..(2 * GameView.squareWidthPixels),
+                range = 0..(2 * 10),
                 durationMs = 2 * GameTimings.default.dropDuration,
                 onUpdate = any(),
                 onEnd = any(),

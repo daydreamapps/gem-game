@@ -57,10 +57,7 @@ class GameView @JvmOverloads constructor(
 
     private var gridPaddingPercent: Float = 0.1F
 
-    companion object {
-        // TODO: move to GameController
-        var squareWidthPixels: Int = 0
-    }
+    var squareWidthPixels: Int = 0
 
     private var gemRadius: Int = 0
 
@@ -261,10 +258,12 @@ class GameView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
 
         squareWidthPixels = width / immutableGameConfig.width
+
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
 
         gameController = GameController(gemGrid, gemRadius, gameTimings)
+        gameController.squareWidthPixels = width / immutableGameConfig.width
 
         if (!isInitialised) initialise()
     }

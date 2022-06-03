@@ -4,7 +4,6 @@
 
         <attr name="gridPaddingPercent" format="float" />
 
-        <attr name="dropDuration" format="integer" />
         <attr name="hideDuration" format="integer" />
     </declare-styleable>
 </resources>

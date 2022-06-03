@@ -1,6 +1,5 @@
 package com.daydreamapplications.gemgame.game.ui
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
@@ -15,7 +14,6 @@ import com.daydreamapplications.gemgame.R
 import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.idle.IdleController
 import java.util.concurrent.ArrayBlockingQueue
-import kotlin.math.max
 
 @Composable
 fun GameView(
@@ -51,16 +49,11 @@ class GameView @JvmOverloads constructor(
 
     private val queue = ArrayBlockingQueue<GameAction>(3, true)
 
-    private var isDropping = false
-
     private var isInitialised = false
 
     private var gridPaddingPercent: Float = 0.1F
 
-    companion object {
-        // TODO: move to GameController
-        var squareWidthPixels: Int = 0
-    }
+    private var squareWidthPixels: Int = 0
 
     private var gemRadius: Int = 0
 
@@ -146,39 +139,11 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun drop(drops: Array<Array<Int>>, gemRemovalArray: IntArray) {
-
-        gameController.verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
-        gameController.radii.setAllBy { _, _ -> gemRadius }
-
-        val startingOffsets = buildIntGrid { x, y ->
-            drops[x, y] * squareWidthPixels
-        }
-
-        val dropSquares = drops.toIterable().maxOrNull() ?: 0
-        val maxDrop = dropSquares * squareWidthPixels
-        val dropDuration = dropSquares * gameTimings.dropDuration
-
-        ValueAnimator.ofInt(0, maxDrop).apply {
-
-            duration = dropDuration
-
-            addUpdateListener { valueAnimator ->
-                val progress = valueAnimator.animatedValue as Int
-
-                gameController.verticalOffsets.setAllBy { x, y ->
-                    max(0, startingOffsets[x, y] - progress)
-                }
-                invalidate()
-            }
-
-            addOnEndListener {
-                isDropping = false
-                handleQueuedActions()
-            }
-
-            isDropping = true
-            start()
-        }
+        gameController.drop(
+            drops = drops,
+            onUpdate = ::invalidate,
+            onEnd = ::handleQueuedActions,
+        )
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
@@ -211,7 +176,7 @@ class GameView @JvmOverloads constructor(
     }
 
     fun handleQueuedActions() {
-        if (isDropping) return
+        if (gameController.isDropping) return
         if (gameController.isRemoving) return
 
         val action = queue.poll()
@@ -261,10 +226,12 @@ class GameView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
 
         squareWidthPixels = width / immutableGameConfig.width
+
         gemRadius = (squareWidthPixels * (1 - gridPaddingPercent) / 2).toInt()
         gestureListener.squareWidthPixels = squareWidthPixels
 
         gameController = GameController(gemGrid, gemRadius, gameTimings)
+        gameController.squareWidthPixels = width / immutableGameConfig.width
 
         if (!isInitialised) initialise()
     }
@@ -339,10 +306,6 @@ class GameView @JvmOverloads constructor(
         radius: Int = gemRadius,
     ) {
         rect.moveTo(xIndex, yIndex, radius)
-    }
-
-    private fun buildIntGrid(init: (Int, Int) -> Int = { _, _ -> 0 }): Array<Array<Int>> {
-        return Array(immutableGameConfig.width) { x -> Array(immutableGameConfig.height) { y -> init(x, y) } }
     }
 
     private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {

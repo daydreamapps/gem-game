@@ -3,6 +3,7 @@ package com.daydreamapplications.gemgame.game.ui
 import androidx.compose.animation.core.AnimationConstants
 import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.utils.Animator
+import kotlin.math.max
 
 class GameController(
     val gameGrid: GameGrid,
@@ -11,9 +12,13 @@ class GameController(
     private val animator: Animator.Companion = Animator.Companion,
 ) {
 
+    var isDropping: Boolean = false
+        private set
     var isRemoving: Boolean = false
         private set
 
+    // TODO: move to GameMeasurements
+    var squareWidthPixels: Int = 0
 
     var selectedGem: Coordinates? = null
 
@@ -35,7 +40,7 @@ class GameController(
         val axis = Coordinates.axis(swap) ?: return
 
         animator.between(
-            range = GameView.squareWidthPixels..0,
+            range = squareWidthPixels..0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
                 offset(coordinates[0], value, axis)
@@ -80,6 +85,40 @@ class GameController(
             },
             onEnd = {
                 isRemoving = false
+                onEnd()
+            },
+        )
+    }
+
+    fun drop(
+        drops: Array<Array<Int>>,
+        onUpdate: () -> Unit,
+        onEnd: () -> Unit,
+    ) {
+
+        verticalOffsets.setAllBy { x, y -> drops[x, y] * squareWidthPixels }
+        radii.setAllBy { _, _ -> gemRadius }
+
+        val startingOffsets = intGrid(gameGrid.width, gameGrid.height) { x, y ->
+            drops[x, y] * squareWidthPixels
+        }
+
+        val dropSquares = drops.toIterable().maxOrNull() ?: 0
+        val maxDrop = dropSquares * squareWidthPixels
+
+        isDropping = true
+
+        animator.between(
+            range = 0..maxDrop,
+            durationMs = dropSquares * gameTimings.dropDuration,
+            onUpdate = { value ->
+                verticalOffsets.setAllBy { x, y ->
+                    max(0, startingOffsets[x, y] - value)
+                }
+                onUpdate()
+            },
+            onEnd = {
+                isDropping = false
                 onEnd()
             },
         )

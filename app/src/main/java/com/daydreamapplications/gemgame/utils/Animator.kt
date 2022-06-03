@@ -13,8 +13,8 @@ interface Animator {
         fun between(
             range: IntRange,
             durationMs: Long,
-            onUpdate: (value: Int) -> Unit,
-            onEnd: () -> Unit,
+            onUpdate: (value: Int) -> Unit = {},
+            onEnd: () -> Unit = {},
         ) {
             ValueAnimator.ofInt(range.first, range.last).apply {
 

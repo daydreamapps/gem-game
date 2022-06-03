@@ -5,8 +5,15 @@ import com.daydreamapplications.gemgame.game.addOnEndListener
 
 interface Animator {
 
-//    fun start()
-//    fun end()
+    fun start()
+    fun end()
+
+    data class AnimatorDecorator(
+        private val valueAnimator: ValueAnimator,
+    ) : Animator {
+        override fun start() = valueAnimator.start()
+        override fun end() = valueAnimator.end()
+    }
 
     companion object {
 
@@ -15,8 +22,8 @@ interface Animator {
             durationMs: Long,
             onUpdate: (value: Int) -> Unit = {},
             onEnd: () -> Unit = {},
-        ) {
-            ValueAnimator.ofInt(range.first, range.last).apply {
+        ): Animator {
+            val valueAnimator = ValueAnimator.ofInt(range.first, range.last).apply {
 
                 duration = durationMs
 
@@ -25,6 +32,8 @@ interface Animator {
 
                 start()
             }
+
+            return AnimatorDecorator(valueAnimator)
         }
     }
 }

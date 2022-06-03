@@ -60,7 +60,7 @@ class GameControllerTest : TestCase() {
                 onUpdate = any(),
                 onEnd = any(),
             )
-        } just Runs
+        } returns mockk()
 
 
         subject(
@@ -93,7 +93,7 @@ class GameControllerTest : TestCase() {
                 onUpdate = any(),
                 onEnd = capture(endSlot),
             )
-        } just Runs
+        } returns mockk()
 
         val onEnd: () -> Unit = mockk(relaxed = true)
 
@@ -124,7 +124,7 @@ class GameControllerTest : TestCase() {
                 onUpdate = capture(updateSlot),
                 onEnd = any(),
             )
-        } just Runs
+        } returns mockk()
 
         val onUpdate: () -> Unit = mockk(relaxed = true)
 

@@ -21,7 +21,7 @@ interface Animator {
     companion object {
 
         fun betweenInts(
-            range: IntRange,
+            range: IntProgression,
             durationMs: Long,
             onUpdate: (value: Int) -> Unit = {},
             onEnd: () -> Unit = {},

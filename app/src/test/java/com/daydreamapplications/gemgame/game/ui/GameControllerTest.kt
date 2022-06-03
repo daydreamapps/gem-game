@@ -64,7 +64,7 @@ class GameControllerTest : TestCase() {
 
         every {
             animator.betweenInts(
-                range = 10..0,
+                range = 10 downTo 0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -84,7 +84,7 @@ class GameControllerTest : TestCase() {
 
         verify {
             animator.betweenInts(
-                range = 10..0,
+                range = 10 downTo 0,
                 durationMs = 400L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -160,7 +160,7 @@ class GameControllerTest : TestCase() {
         val animator: Animator.Companion = mockk()
         every {
             animator.betweenInts(
-                range = 10..0,
+                range = 10 downTo 0,
                 durationMs = 100L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -182,7 +182,7 @@ class GameControllerTest : TestCase() {
 
         verify {
             animator.betweenInts(
-                range = 10..0,
+                range = 10 downTo 0,
                 durationMs = 100L,
                 onUpdate = any(),
                 onEnd = any(),
@@ -245,7 +245,7 @@ class GameControllerTest : TestCase() {
             animator = animator,
         ).apply {
 
-            radii.get(0, 0) assertEquals 10
+            radii[0, 0] assertEquals 10
 
             remove(
                 removals = listOf(Coordinates(x = 0, y = 0)),
@@ -254,7 +254,7 @@ class GameControllerTest : TestCase() {
             )
 
             updateSlot.captured(5)
-            radii.get(0, 0) assertEquals 5
+            radii[0, 0] assertEquals 5
         }
 
         verify {

@@ -44,7 +44,7 @@ class IdleController @Inject constructor(
         idleActionAnimator.pause()
     }
 
-    fun move() {
+    private fun move() {
         onGameActionListener?.let {
             val coordinate = Coordinates(
                 x = Random.nextInt(1, width - 1),

@@ -27,7 +27,7 @@ data class Group<T : Any>(
     val score: Int
         get() = coordinates.size * coordinates.size
 
-    fun horizontalMatch(coordinate: Coordinates): Boolean {
+    private fun horizontalMatch(coordinate: Coordinates): Boolean {
         coordinate.run {
             val leftest = offset(Direction.LEFT, 2)
             val left = offset(Direction.LEFT, 1)
@@ -40,16 +40,16 @@ data class Group<T : Any>(
         }
     }
 
-    fun verticalMatch(coordinate: Coordinates): Boolean {
+    private fun verticalMatch(coordinate: Coordinates): Boolean {
         coordinate.run {
-            val upest = offset(Direction.UP, 2)
+            val upper = offset(Direction.UP, 2)
             val up = offset(Direction.UP, 1)
             val down = offset(Direction.DOWN, 1)
-            val downest = offset(Direction.DOWN, 2)
+            val downer = offset(Direction.DOWN, 2)
 
-            return (coordinates.contains(upest) && coordinates.contains(up)) ||
+            return (coordinates.contains(upper) && coordinates.contains(up)) ||
                     (coordinates.contains(up) && coordinates.contains(down)) ||
-                    (coordinates.contains(down) && coordinates.contains(downest))
+                    (coordinates.contains(down) && coordinates.contains(downer))
         }
     }
 }
@@ -73,7 +73,7 @@ class GroupBuilder<T : Any>(
             .toSet()
     }
 
-    fun groupStartingFrom(x: Int, y: Int): Group<T> {
+    private fun groupStartingFrom(x: Int, y: Int): Group<T> {
         require(x in 0 until grid.width)
         require(y in 0 until grid.height)
 
@@ -106,7 +106,7 @@ class GroupBuilder<T : Any>(
         )
     }
 
-    fun linkedSquares(coordinates: Coordinates): Set<Coordinates> {
+    private fun linkedSquares(coordinates: Coordinates): Set<Coordinates> {
         return coordinates.touching
             .filter(grid::contains)
             .toSet()

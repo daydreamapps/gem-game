@@ -50,7 +50,7 @@ class GameGrid(
         }.toTypedArray()
     }
 
-    fun removeAllInColumn(xIndex: Int) {
+    private fun removeAllInColumn(xIndex: Int) {
         column(xIndex).forEachIndexed { yIndex, _ ->
             set(xIndex, yIndex, randomGemType())
         }
@@ -58,9 +58,9 @@ class GameGrid(
     }
 
     // ToDo: remove, call removeGemsInColumn directly
-    fun removeGems(xIndex: Int, indices: Iterable<Int>): Array<Int> = removeGemsInColumn(xIndex, indices)
+    private fun removeGems(xIndex: Int, indices: Iterable<Int>): Array<Int> = removeGemsInColumn(xIndex, indices)
 
-    fun removeGemsInColumn(xIndex: Int, indices: Iterable<Int>): Array<Int> {
+    private fun removeGemsInColumn(xIndex: Int, indices: Iterable<Int>): Array<Int> {
         val column = column(xIndex).toList()
         val dropHeights = getDropHeightsForColumn(xIndex, indices)
 
@@ -78,7 +78,7 @@ class GameGrid(
         return dropHeights
     }
 
-    fun getDropHeightsForColumn(xIndex: Int, indicesToRemove: Iterable<Int>): Array<Int> {
+    private fun getDropHeightsForColumn(xIndex: Int, indicesToRemove: Iterable<Int>): Array<Int> {
         val column = column(xIndex).toList()
         var count = 0
         val startLocation = Array(column.size + indicesToRemove.toList().size) {

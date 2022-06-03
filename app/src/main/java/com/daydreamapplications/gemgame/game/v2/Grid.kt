@@ -3,16 +3,18 @@ package com.daydreamapplications.gemgame.game.v2
 import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.IGrid
 
-@Suppress("UNCHECKED_CAST") // Required & wekk tested
+@Suppress("UNCHECKED_CAST") // Required & well tested
 open class Grid<T : Any>(
     override val width: Int,
     override val height: Int,
     val fillValue: (x: Int, y: Int) -> T,
 ) : IGrid<T> {
 
-    private val columns: Array<Array<Any>> = Array(width) { xIndex ->
-        Array(height) { yIndex ->
-            fillValue(xIndex, yIndex)
+    private val columns: Array<Array<Any>> by lazy {
+        Array(width) { xIndex ->
+            Array(height) { yIndex ->
+                fillValue(xIndex, yIndex)
+            }
         }
     }
 

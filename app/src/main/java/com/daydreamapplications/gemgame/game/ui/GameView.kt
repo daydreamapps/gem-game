@@ -55,7 +55,7 @@ class GameView @JvmOverloads constructor(
     private var isDropping = false
 
     private var isInitialised = false
-    private var selectedGem: Coordinates? = null
+//    private var selectedGem: Coordinates? = null
 
     private var dropDuration: Long = 100L
     private var hideDuration: Long = 500L
@@ -73,7 +73,7 @@ class GameView @JvmOverloads constructor(
             value?.onGameActionListener = this@GameView
         }
 
-    var gameController: GameController = GameController(gemGrid, gemRadius, gameTimings)
+    private var gameController: GameController = GameController(gemGrid, gemRadius, gameTimings)
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.GameView, 0, 0).apply {
@@ -130,12 +130,12 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun select(selection: Coordinates) {
-        selectedGem = selection
+        gameController.selectedGem = selection
         invalidate()
     }
 
     override fun deselect() {
-        selectedGem = null
+        gameController.selectedGem = null
         invalidate()
     }
 
@@ -199,7 +199,7 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun swap(swap: Pair<Coordinates, Coordinates>) {
-        selectedGem = null
+        gameController.selectedGem = null
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
         val axis = Coordinates.axis(swap)
         fun applyOffset(offset: Int) {
@@ -325,7 +325,7 @@ class GameView @JvmOverloads constructor(
             gemType.draw(canvas = canvas, xIndex = xIndex, yIndex = yIndex)
         }
 
-        selectedGem?.apply {
+        gameController.selectedGem?.apply {
             renderSelector(canvas, x, y)
         }
     }

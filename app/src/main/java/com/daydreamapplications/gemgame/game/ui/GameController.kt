@@ -1,5 +1,6 @@
 package com.daydreamapplications.gemgame.game.ui
 
+import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.GameGrid
 import com.daydreamapplications.gemgame.game.GameTimings
 
@@ -8,6 +9,8 @@ class GameController(
     val gemRadius: Int,
     private val gameTimings: GameTimings,
 ) {
+
+    var selectedGem: Coordinates? = null
 
     val radii: Array<Array<Int>> = buildIntGrid(gemRadius)
     val verticalOffsets: Array<Array<Int>> = buildIntGrid(0)

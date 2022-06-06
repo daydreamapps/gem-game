@@ -176,6 +176,7 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun handleQueuedActions() {
+        // Should not escape when swapping, this is to allow multiple swap events.
         if (gameController.isDropping) return
         if (gameController.isRemoving) return
 
@@ -309,6 +310,7 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun hideMatchedGemsIfPresent(gemRemovalArray: IntArray = IntArray(immutableGameConfig.width)) {
+        if (gameController.isAnimating) return
 
         gemGrid.getAllMatches().apply {
             if (isNotEmpty()) {

@@ -34,6 +34,8 @@ class GameControllerTest {
         ).apply {
             isDropping assertEquals false
             isRemoving assertEquals false
+            isSwapping assertEquals false
+            isAnimating assertEquals false
 
             radii.apply {
                 width assertEquals 3
@@ -63,7 +65,7 @@ class GameControllerTest {
     }
 
     @Test
-    fun swap() {
+    fun `swap updates isSwapping state`() {
         val animator: Animator.Companion = mockk()
 
         every {
@@ -80,11 +82,15 @@ class GameControllerTest {
             gameTimings = TestGameTimings.gameTimings(swapDurationMs = 400L),
             animator = animator,
             squareWidthPixels = 10,
-        ).swap(
-            swap = Coordinates(x = 0, y = 0) to Coordinates(1, 0),
-            onUpdate = {},
-            onEnd = {}
-        )
+        ).apply {
+            swap(
+                swap = Coordinates(x = 0, y = 0) to Coordinates(1, 0),
+                onUpdate = {},
+                onEnd = {}
+            )
+
+            isSwapping assertEquals true
+        }
 
         verify {
             animator.betweenInts(

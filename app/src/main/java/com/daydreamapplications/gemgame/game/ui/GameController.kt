@@ -16,6 +16,11 @@ class GameController(
         private set
     var isRemoving: Boolean = false
         private set
+    var isSwapping: Boolean = false
+        private set
+
+    val isAnimating: Boolean
+        get() = isDropping || isRemoving || isSwapping
 
     // TODO: move to GameMeasurements
     var squareWidthPixels: Int = 0
@@ -39,6 +44,8 @@ class GameController(
         val coordinates = swap.toList().sortedBy { it.x }.sortedBy { it.y }
         val axis = Coordinates.axis(swap) ?: return
 
+        isSwapping = true
+
         animator.betweenInts(
             range = squareWidthPixels downTo 0,
             durationMs = gameTimings.swapDurationMs,
@@ -47,7 +54,10 @@ class GameController(
                 offset(coordinates[1], -value, axis)
                 onUpdate()
             },
-            onEnd = onEnd,
+            onEnd = {
+                isSwapping = false
+                onEnd()
+            },
         )
     }
 

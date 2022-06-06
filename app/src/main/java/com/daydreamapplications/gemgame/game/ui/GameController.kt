@@ -40,7 +40,7 @@ class GameController(
         val axis = Coordinates.axis(swap) ?: return
 
         animator.betweenInts(
-            range = squareWidthPixels..0,
+            range = squareWidthPixels downTo 0,
             durationMs = gameTimings.swapDurationMs,
             onUpdate = { value ->
                 offset(coordinates[0], value, axis)
@@ -75,7 +75,7 @@ class GameController(
         isRemoving = true
 
         animator.betweenInts(
-            range = gemRadius..0,
+            range = gemRadius downTo 0,
             durationMs = gameTimings.hideDuration,
             onUpdate = { value ->
                 removals.forEach {

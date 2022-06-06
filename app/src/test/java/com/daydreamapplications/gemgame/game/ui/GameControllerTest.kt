@@ -5,9 +5,9 @@ import com.daydreamapplications.gemgame.game.*
 import com.daydreamapplications.gemgame.utils.Animator
 import com.daydreamapplications.gemgame.utils.TestGameTimings
 import io.mockk.*
-import junit.framework.TestCase
+import org.junit.Test
 
-class GameControllerTest : TestCase() {
+class GameControllerTest {
 
     private fun subject(
         gameGrid: GameGrid = GameGrid(width = 3, height = 2),
@@ -27,7 +27,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test initial state`() {
+    @Test
+    fun `initial state`() {
         subject(
             gameGrid = GameGrid(width = 3, height = 2),
         ).apply {
@@ -41,7 +42,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test verticalOffsets grid matches GameGrid`() {
+    @Test
+    fun `verticalOffsets grid matches GameGrid`() {
         subject(
             gameGrid = GameGrid(width = 3, height = 2),
         ).verticalOffsets.apply {
@@ -50,7 +52,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test horizontalOffsets grid matches GameGrid`() {
+    @Test
+    fun `horizontalOffsets grid matches GameGrid`() {
         subject(
             gameGrid = GameGrid(width = 3, height = 2),
         ).horizontalOffsets.apply {
@@ -59,7 +62,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test swap`() {
+    @Test
+    fun swap() {
         val animator: Animator.Companion = mockk()
 
         every {
@@ -92,7 +96,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test on swap end invokes onEnd callback`() {
+    @Test
+    fun `on swap end invokes onEnd callback`() {
         val animator: Animator.Companion = mockk()
         val endSlot = slot<() -> Unit>()
 
@@ -123,7 +128,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test on swap update invokes onUpdate callback`() {
+    @Test
+    fun `on swap update invokes onUpdate callback`() {
         val animator: Animator.Companion = mockk()
         val updateSlot = slot<(Int) -> Unit>()
 
@@ -154,7 +160,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test remove updates isRemoving state`() {
+    @Test
+    fun `remove updates isRemoving state`() {
         val gameTimings = TestGameTimings.gameTimings(hideDuration = 100L)
 
         val animator: Animator.Companion = mockk()
@@ -190,7 +197,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test remove onEnd isRemoving state`() {
+    @Test
+    fun `remove onEnd isRemoving state`() {
         val animator: Animator.Companion = mockk()
         val endSlot: CapturingSlot<() -> Unit> = slot()
 
@@ -227,7 +235,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test update sets radius`() {
+    @Test
+    fun `update sets radius`() {
         val animator: Animator.Companion = mockk()
         val updateSlot: CapturingSlot<(Int) -> Unit> = slot()
         every {
@@ -262,7 +271,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test drop updates isDropping state`() {
+    @Test
+    fun `drop updates isDropping state`() {
         val dropGrid = intGrid(width = 3, height = 2, init = 0).apply {
             set(xIndex = 0, yIndex = 0, value = 2)
         }
@@ -305,7 +315,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test drop onUpdate updates verticalOffsets`() {
+    @Test
+    fun `drop onUpdate updates verticalOffsets`() {
         val dropGrid = intGrid(width = 3, height = 2, init = 0).apply {
             set(xIndex = 0, yIndex = 0, value = 2)
         }
@@ -350,7 +361,8 @@ class GameControllerTest : TestCase() {
         }
     }
 
-    fun `test drop onEnd updates isDropping state`() {
+    @Test
+    fun `drop onEnd updates isDropping state`() {
         val animator: Animator.Companion = mockk()
         val endSlot: CapturingSlot<() -> Unit> = slot()
         every {

@@ -2,6 +2,7 @@ package com.daydreamapplications.gemgame.idle
 
 import com.daydreamapplications.gemgame.game.GameConfig
 import com.daydreamapplications.gemgame.game.GameTimings
+import com.daydreamapplications.gemgame.idle.timing.IdleGameTimings
 import com.daydreamapplications.gemgame.utils.Animator
 import dagger.Binds
 import dagger.Module

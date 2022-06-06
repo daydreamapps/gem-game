@@ -1,14 +1,20 @@
 package com.daydreamapplications.gemgame.idle
 
-import com.daydreamapplications.gemgame.assertEquals
+import com.daydreamapplications.gemgame.idle.timing.IdleGameTimings
+import com.daydreamapplications.gemgame.idle.timing.TimingPersistence
 import com.daydreamapplications.gemgame.idle.upgrades.Upgrade
 import com.daydreamapplications.gemgame.idle.upgrades.UpgradeType
-import junit.framework.TestCase
+import io.mockk.*
+import org.junit.Test
 
-class IdleGameTimingsTest : TestCase() {
+class IdleGameTimingsTest {
 
-    private fun subject(): IdleGameTimings {
-        return IdleGameTimings()
+    private fun subject(
+        timingPersistence: TimingPersistence = mockk(),
+    ): IdleGameTimings {
+        return IdleGameTimings(
+            timingPersistence = timingPersistence,
+        )
     }
 
     private fun upgrade(
@@ -23,27 +29,23 @@ class IdleGameTimingsTest : TestCase() {
         )
     }
 
-    fun `test initial values`() {
-        subject().apply {
-            dropDuration assertEquals 100L
-            hideDuration assertEquals 500L
-            swapDurationMs assertEquals 500L
-        }
-    }
-
-    fun `test upgrade swap speed`() {
+    @Test
+    fun `swap speed upgrade updates persistence`() {
+        val timingPersistence: TimingPersistence = mockk()
+        every { timingPersistence.swapDurationInMs } returns 100L
+        every { timingPersistence.swapDurationInMs = 80L } just Runs
 
         val upgrade = upgrade(
             type = UpgradeType.SWAP_SPEED,
             multiplier = 0.8,
         )
 
-        subject().apply {
-            swapDurationMs assertEquals 500L
+        subject(
+            timingPersistence = timingPersistence,
+        ).applyUpgrade(upgrade)
 
-            applyUpgrade(upgrade)
-
-            swapDurationMs assertEquals 400L
+        verify {
+            timingPersistence.swapDurationInMs = 80L
         }
     }
 }

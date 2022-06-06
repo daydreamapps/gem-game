@@ -11,7 +11,7 @@ class TimingPersistence @Inject constructor(
 ) {
 
     var dropDurationInMs: Long
-        get() = sharedPreferences.getLong(DROP_KEY, 0L)
+        get() = sharedPreferences.getLong(DROP_KEY, 100L)
         set(value) {
             sharedPreferences.edit {
                 putLong(DROP_KEY, value)
@@ -19,7 +19,7 @@ class TimingPersistence @Inject constructor(
         }
 
     var hideDurationInMs: Long
-        get() = sharedPreferences.getLong(HIDE_KEY, 0L)
+        get() = sharedPreferences.getLong(HIDE_KEY, 500L)
         set(value) {
             sharedPreferences.edit {
                 putLong(HIDE_KEY, value)
@@ -27,7 +27,7 @@ class TimingPersistence @Inject constructor(
         }
 
     var swapDurationInMs: Long
-        get() = sharedPreferences.getLong(SWAP_KEY, 0L)
+        get() = sharedPreferences.getLong(SWAP_KEY, 500L)
         set(value) {
             sharedPreferences.edit {
                 putLong(SWAP_KEY, value)

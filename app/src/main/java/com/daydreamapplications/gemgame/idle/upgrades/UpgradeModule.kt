@@ -14,6 +14,9 @@ import kotlinx.coroutines.runBlocking
 class UpgradeModule {
 
     @Provides
+    fun provideUpgradeDao(upgradeDatabase: UpgradeDatabase): UpgradeDao = upgradeDatabase.upgradeDao()
+
+    @Provides
     fun provideUpgradeDatabase(@ApplicationContext context: Context): UpgradeDatabase {
         return Room.databaseBuilder(
             context,

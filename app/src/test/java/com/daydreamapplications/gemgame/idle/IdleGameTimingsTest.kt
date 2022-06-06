@@ -18,11 +18,13 @@ class IdleGameTimingsTest {
     }
 
     private fun upgrade(
+        id: Int = 0,
         cost: Long = 100,
         type: UpgradeType = UpgradeType.SWAP_SPEED,
         multiplier: Double = 0.5,
     ): Upgrade {
         return Upgrade(
+            id = id,
             cost = cost,
             type = type,
             multiplier = multiplier,

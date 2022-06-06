@@ -3,6 +3,7 @@ package com.daydreamapplications.gemgame.idle
 import com.daydreamapplications.gemgame.assertEquals
 import com.daydreamapplications.gemgame.game.GameConfig
 import com.daydreamapplications.gemgame.game.OnGameActionListener
+import com.daydreamapplications.gemgame.idle.timing.IdleGameTimings
 import com.daydreamapplications.gemgame.utils.Animator
 import io.mockk.*
 import org.junit.Test

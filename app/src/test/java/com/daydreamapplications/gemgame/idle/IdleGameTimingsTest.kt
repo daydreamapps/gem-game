@@ -1,6 +1,7 @@
 package com.daydreamapplications.gemgame.idle
 
 import com.daydreamapplications.gemgame.assertEquals
+import com.daydreamapplications.gemgame.idle.timing.IdleGameTimings
 import com.daydreamapplications.gemgame.idle.upgrades.Upgrade
 import com.daydreamapplications.gemgame.idle.upgrades.UpgradeType
 import junit.framework.TestCase

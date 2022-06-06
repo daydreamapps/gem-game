@@ -5,6 +5,7 @@ import com.daydreamapplications.gemgame.game.Coordinates
 import com.daydreamapplications.gemgame.game.Direction
 import com.daydreamapplications.gemgame.game.GameConfig
 import com.daydreamapplications.gemgame.game.OnGameActionListener
+import com.daydreamapplications.gemgame.idle.timing.IdleGameTimings
 import com.daydreamapplications.gemgame.idle.upgrades.Upgrade
 import com.daydreamapplications.gemgame.utils.Animator
 import javax.inject.Inject

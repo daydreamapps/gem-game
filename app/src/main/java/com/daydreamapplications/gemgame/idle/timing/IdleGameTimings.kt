@@ -1,4 +1,4 @@
-package com.daydreamapplications.gemgame.idle
+package com.daydreamapplications.gemgame.idle.timing
 
 import com.daydreamapplications.gemgame.game.GameTimings
 import com.daydreamapplications.gemgame.idle.upgrades.Upgrade

@@ -2,6 +2,7 @@ package com.daydreamapplications.gemgame.idle.upgrades
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Database(entities = [UpgradeEntity::class], version = 1)
 abstract class UpgradeDatabase : RoomDatabase() {
@@ -25,6 +26,12 @@ interface UpgradeDao {
 
     @Query("UPDATE UpgradeEntity SET purchased=1 WHERE id=:upgradeId")
     suspend fun purchase(upgradeId: Int)
+
+    companion object {
+        fun UpgradeDao.upgradeStream(): Flow<List<Upgrade>> {
+            return availableUpgrades().map { it.map(UpgradeEntity::upgrade) }
+        }
+    }
 }
 
 @Entity

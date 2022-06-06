@@ -18,6 +18,10 @@ interface UpgradeDao {
     @Query("UPDATE UpgradeEntity SET purchased=1 WHERE id=:upgradeId")
     suspend fun purchase(upgradeId: Int)
 //    suspend fun purchase(upgradeId: Int, purchased: Boolean)
+
+    // TODO: remove once database is initialised properly
+    @Insert
+    suspend fun insert(upgrade: UpgradeEntity)
 }
 
 @Entity

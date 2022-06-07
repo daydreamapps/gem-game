@@ -26,15 +26,14 @@ interface Animator {
             onUpdate: (value: Int) -> Unit = {},
             onEnd: () -> Unit = {},
         ): Animator {
-            val valueAnimator = ValueAnimator.ofInt(range.first, range.last).apply {
+            ValueAnimator.ofObject()
+            val valueAnimator = ValueAnimator.ofInt(range.first, range.last)
 
-                duration = durationMs
 
-                addUpdateListener { onUpdate(it.animatedValue as Int) }
-                addOnEndListener(onEnd)
-
-                start()
-            }
+            valueAnimator.duration = durationMs
+            valueAnimator.addUpdateListener { onUpdate(it.animatedValue as Int) }
+            valueAnimator.addOnEndListener(onEnd)
+            valueAnimator.start()
 
             return AnimatorDecorator(valueAnimator)
         }
